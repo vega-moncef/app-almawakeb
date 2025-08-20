@@ -3,9 +3,9 @@
     <b-container fluid>
       <b-row>
         <b-col cols="12" class="text-center">
-          {{ currentYear }} &copy; Lahomes. Crafted by
+          {{ currentYear }} &copy; Institution al mawakeb privée . Crafted by
           <Icon icon="solar:hearts-bold-duotone" class="fs-18 align-middle text-danger" />
-          <router-link to="" class="fw-bold footer-text" target="_blank">Techzaa</router-link>
+          <router-link to="" class="fw-bold footer-text" target="_blank">Moncef</router-link>
         </b-col>
       </b-row>
     </b-container>

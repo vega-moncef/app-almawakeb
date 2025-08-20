@@ -44,6 +44,20 @@
                 <b-form-radio value="sm-hover">Small Hover</b-form-radio>
               </b-form-radio-group>
             </div>
+
+            <div>
+              <h5 class="my-3 font-16 fw-semibold">Academic Year</h5>
+              <div v-if="academicYearStore.loading" class="text-center">
+                <b-spinner small></b-spinner> Loading...
+              </div>
+              <b-form-select v-else 
+                v-model="selectedYearId" 
+                :options="yearOptions">
+              </b-form-select>
+              <small class="text-muted d-block mt-1">
+                Current: {{ academicYearStore.currentYearName }}
+              </small>
+            </div>
           </div>
         </simplebar>
       </div>
@@ -60,14 +74,54 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import simplebar from 'simplebar-vue';
-
+import { computed, onMounted, ref, watch } from 'vue';
 import { useLayoutStore } from '@/stores/layout';
+import { useAcademicYearStore } from '@/stores/academicYear';
 
 const useLayout = useLayoutStore();
+const academicYearStore = useAcademicYearStore();
+const selectedYearId = ref(null);
 
 const { layout, setTheme, setTopBarColor, setLeftSideBarColor, setLeftSideBarSize, reset } = useLayout;
+
+// Compute options for the select
+const yearOptions = computed(() => {
+  return academicYearStore.availableYears.map(year => ({
+    value: year.id,
+    text: year.name
+  }));
+});
+
+const changeAcademicYear = async (yearId) => {
+  console.log('🔄 Changing academic year to:', yearId);
+  try {
+    await academicYearStore.setCurrentAcademicYear(parseInt(yearId));
+    console.log('✅ Academic year changed successfully');
+  } catch (error) {
+    console.error('❌ Failed to change academic year:', error);
+    // Reset to previous value if error
+    selectedYearId.value = academicYearStore.currentYearId;
+  }
+};
+
+// Watch for changes in current academic year to sync the select
+watch(() => academicYearStore.currentYearId, (newId) => {
+  selectedYearId.value = newId;
+}, { immediate: true });
+
+// Watch for changes in selected year to trigger API call
+watch(selectedYearId, async (newId, oldId) => {
+  // Avoid infinite loop and only change if user actually selected something different
+  if (newId && newId !== oldId && newId !== academicYearStore.currentYearId) {
+    await changeAcademicYear(newId);
+  }
+});
+
+onMounted(() => {
+  academicYearStore.init();
+});
 </script>
 
 <style scoped>

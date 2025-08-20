@@ -40,7 +40,7 @@
 <body>
     <div id="app"></div>
     <div id="splash-screen">
-        <img alt="Logo" class="light" src="{{ Vite::asset('resources/js/assets/images/logo-dark.png') }}" style="height: 10%;" />
+        <img alt="Logo" class="light" src="{{ Vite::asset('resources/js/assets/images/logo mawakeb.png') }}" style="height: 50%;" />
     </div>
     
     @vite(['resources/js/main.ts'])

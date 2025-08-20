@@ -6,6 +6,110 @@ export const MENU_ITEMS: MenuItemType[] = [
         label: 'MENU',
         isTitle: true,
     },
+
+    {
+        key: 'dashboard',
+        icon: 'ri-dashboard-2-line',
+        label: 'Tableau de bord',
+    },
+
+
+
+    {
+        key: 'admissions',
+        icon: 'ri-user-add-line',
+        label: 'Admissions',
+        children: [
+            {
+                key: 'admissions-visits-list',
+                label: 'Student Visits',
+                route: {name: 'admissions.visits.list'},
+                parentKey: 'admissions'
+            },
+            {
+                key: 'admissions-visits-create',
+                label: 'New Student Visit',
+                route: {name: 'admissions.visits.create'},
+                parentKey: 'admissions'
+            },
+             {
+                key: 'admissions-visits-list',
+                label: 'Tests & Résultats',
+                parentKey: 'admissions'
+            },
+        ],
+    },
+
+
+    {
+        key: 'academic-management',
+        icon: 'ri-book-2-line',
+        label: 'Gestion Académique',
+        children: [
+            {
+                key: 'academic-years',
+                label: 'Années Académiques',
+                parentKey: 'academic-management'
+            },
+            {
+                key: 'admissions-visits-create',
+                label: 'Écoles',
+                parentKey: 'academic-management'
+            },
+             {
+                key: 'admissions-visits-create',
+                label: 'Niveaux',
+                parentKey: 'academic-management'
+            },
+            {
+                key: 'admissions-visits-create',
+                label: 'Classes & Sections',
+                parentKey: 'academic-management'
+            },
+                        {
+                key: 'admissions-visits-create',
+                label: 'Matières',
+                parentKey: 'academic-management'
+            },
+        ],
+    },
+
+
+      {
+        key: 'Students',
+        icon: 'ri-graduation-cap-line',
+        label: 'Élèves',
+        children: [
+            {
+                key: 'academic-years',
+                label: 'Élèves Inscrits',
+                parentKey: 'Students'
+            },
+            {
+                key: 'admissions-visits-create',
+                label: 'Promotion & Transferts',
+                parentKey: 'Students'
+            },
+             {
+                key: 'admissions-visits-create',
+                label: 'Informations Médicales',
+                parentKey: 'Students'
+            },
+            {
+                key: 'admissions-visits-create',
+                label: 'Documents',
+                parentKey: 'Students'
+            },
+                        {
+                key: 'admissions-visits-create',
+                label: 'Activités',
+                parentKey: 'Students'
+            },
+        ],
+    },
+
+
+
     {
         key: 'dashboards',
         icon: 'ri-dashboard-2-line',
@@ -176,6 +280,7 @@ export const MENU_ITEMS: MenuItemType[] = [
             },
         ],
     },
+
     {
         key: 'custom',
         label: 'Custom',

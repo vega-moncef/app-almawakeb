@@ -54,7 +54,29 @@ onMounted(() => {
   });
 });
 
-import logoSm from '@/assets/images/logo-sm.png';
-import logoDark from '@/assets/images/logo-dark.png';
-import logoLight from '@/assets/images/logo-light.png';
+import logoSm from '@/assets/images/logo mawakeb.png';
+import logoDark from '@/assets/images/logo mawakeb.png';
+import logoLight from '@/assets/images/logo mawakeb.png';
 </script>
+
+<style scoped>
+
+.logo-box {
+  display: flex;
+  justify-content: center; /* centers horizontally */
+  align-items: center;     /* centers vertically if needed */
+  text-align: center;
+  width: 100%;
+}
+
+.logo-light-big {
+  display: block;
+  max-width: 300px; /* adjust as needed */
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+.logo-box .logo-lg {
+    padding-top: 25px;
+    height: 120px};
+</style>

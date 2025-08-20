@@ -1006,4 +1006,25 @@ const mapsRoutes = [
     }
 ];
 
-export const allRoutes = [...authRoutes, ...errorRoutes, ...dashboardRoutes,...propertyRoutes,...agentsRoutes,...customersRoutes,...appsRoutes, ...pagesRoutes, ...uiRoutes, ...advancedUIRoutes, ...chartsRoutes, ...formRoutes, ...tablesRoutes, ...iconsRoutes, ...mapsRoutes, ...layoutRoutes];
+const admissionsRoutes = [
+    {
+        path: '/admissions/visits',
+        name: 'admissions.visits.list',
+        meta: {
+            title: setTitle('Student Visits'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/StudentVisitsList.vue')
+    },
+    {
+        path: '/admissions/visits/create',
+        name: 'admissions.visits.create',
+        meta: {
+            title: setTitle('New Student Visit'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/StudentVisitForm.vue')
+    }
+];
+
+export const allRoutes = [...authRoutes, ...errorRoutes, ...dashboardRoutes,...propertyRoutes,...agentsRoutes,...customersRoutes,...appsRoutes, ...pagesRoutes, ...uiRoutes, ...advancedUIRoutes, ...chartsRoutes, ...formRoutes, ...tablesRoutes, ...iconsRoutes, ...mapsRoutes, ...admissionsRoutes, ...layoutRoutes];
