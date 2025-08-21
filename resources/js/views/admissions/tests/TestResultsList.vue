@@ -128,6 +128,7 @@
                     <th>Étudiant</th>
                     <th>Test</th>
                     <th>Date d'assignation</th>
+                    <th>Heure de début</th>
                     <th>Statut</th>
                     <th>Score</th>
                     <th>Résultat</th>
@@ -137,7 +138,7 @@
                 </thead>
                 <tbody>
                   <tr v-if="loading">
-                    <td colspan="8" class="text-center py-4">
+                    <td colspan="9" class="text-center py-4">
                       <div class="spinner-border spinner-border-sm" role="status">
                         <span class="visually-hidden">Chargement...</span>
                       </div>
@@ -145,7 +146,7 @@
                     </td>
                   </tr>
                   <tr v-else-if="testResults.length === 0">
-                    <td colspan="8" class="text-center py-4 text-muted">
+                    <td colspan="9" class="text-center py-4 text-muted">
                       <i class="fas fa-clipboard-list fa-2x mb-3 d-block"></i>
                       Aucun résultat trouvé
                     </td>
@@ -179,6 +180,11 @@
                     <td>
                       <small class="text-muted">
                         {{ formatDateTime(result.assigned_at) }}
+                      </small>
+                    </td>
+                    <td>
+                      <small class="text-muted">
+                        {{ result.started_at ? formatDateTime(result.started_at) : '-' }}
                       </small>
                     </td>
                     <td>
@@ -233,15 +239,7 @@
                         >
                           <Icon icon="solar:eye-broken" class="me-2" />
                         </button>
-                        <button 
-                          v-if="result.status === 'completed' && result.admission_decision === 'pending'"
-                          type="button" 
-                          class="btn btn-outline-warning"
-                          @click="makeDecision(result)"
-                          title="Prendre Décision"
-                        >
-                          <Icon icon="solar:gavel-broken" class="me-2" />
-                        </button>
+                        
                       </div>
                     </td>
                   </tr>

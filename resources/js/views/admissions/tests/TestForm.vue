@@ -70,21 +70,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                  <label class="form-label">Date du test *</label>
-                  <input 
-                    type="date" 
-                    class="form-control" 
-                    v-model="form.test_date"
-                    :class="{ 'is-invalid': errors.test_date }"
-                    required
-                  >
-                  <div v-if="errors.test_date" class="invalid-feedback">
-                    {{ errors.test_date[0] }}
-                  </div>
-                </div>
-
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
                   <label class="form-label">Durée (minutes) *</label>
                   <input 
                     type="number" 
@@ -97,34 +83,6 @@
                   >
                   <div v-if="errors.duration_minutes" class="invalid-feedback">
                     {{ errors.duration_minutes[0] }}
-                  </div>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Heure de début *</label>
-                  <input 
-                    type="time" 
-                    class="form-control" 
-                    v-model="form.start_time"
-                    :class="{ 'is-invalid': errors.start_time }"
-                    required
-                  >
-                  <div v-if="errors.start_time" class="invalid-feedback">
-                    {{ errors.start_time[0] }}
-                  </div>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Heure de fin *</label>
-                  <input 
-                    type="time" 
-                    class="form-control" 
-                    v-model="form.end_time"
-                    :class="{ 'is-invalid': errors.end_time }"
-                    required
-                  >
-                  <div v-if="errors.end_time" class="invalid-feedback">
-                    {{ errors.end_time[0] }}
                   </div>
                 </div>
 
@@ -354,10 +312,16 @@ import VerticalLayout from "@/layouts/VerticalLayout.vue";
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { useAcademicYearFilter } from '@/composables/useAcademicYearFilter'
 
 // Router and route
 const route = useRoute()
 const router = useRouter()
+
+// Use academic year filtering composable
+const { addAcademicYearFilter } = useAcademicYearFilter(() => {
+  loadFormData()
+})
 
 // Form state
 const loading = ref(false)
@@ -375,9 +339,6 @@ const form = reactive({
   description: '',
   level_id: '',
   type: '',
-  test_date: '',
-  start_time: '08:00',
-  end_time: '10:00',
   duration_minutes: 120,
   total_marks: 20,
   passing_marks: 10,
@@ -410,9 +371,6 @@ const isFormValid = computed(() => {
   return form.title && 
          form.level_id && 
          form.type && 
-         form.test_date && 
-         form.start_time && 
-         form.end_time && 
          form.total_marks > 0 && 
          form.passing_marks >= 0 && 
          form.passing_marks <= form.total_marks &&
@@ -457,9 +415,6 @@ const loadTestData = async () => {
         description: test.description,
         level_id: test.level_id,
         type: test.type,
-        test_date: test.test_date,
-        start_time: test.start_time,
-        end_time: test.end_time,
         duration_minutes: test.duration_minutes,
         total_marks: test.total_marks,
         passing_marks: test.passing_marks,

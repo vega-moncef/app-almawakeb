@@ -297,14 +297,18 @@
                           </span>
                         </td>
                         <td>
+
+                        
                           <button 
                             type="button" 
-                            class="btn btn-outline-danger btn-sm"
+                            class="btn btn-outline-danger"
                             @click="unassignStudent(assignment)"
                             title="Désassigner"
                           >
-                            <i class="fas fa-times"></i>
+                            <Icon icon="solar:trash-bin-trash-broken" class="me-2" />
                           </button>
+
+
                         </td>
                       </tr>
                     </tbody>
@@ -341,6 +345,7 @@
 
 <script setup>
 import VerticalLayout from "@/layouts/VerticalLayout.vue";
+import { Icon } from "@iconify/vue";
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'

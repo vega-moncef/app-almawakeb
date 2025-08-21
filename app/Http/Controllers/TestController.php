@@ -41,7 +41,7 @@ class TestController extends Controller
                 });
             }
 
-            $query->orderBy('test_date', 'desc');
+            $query->orderBy('created_at', 'desc');
 
             $perPage = $request->get('per_page', 15);
             $tests = $query->paginate($perPage);
@@ -69,9 +69,6 @@ class TestController extends Controller
             'description' => 'nullable|string',
             'type' => 'required|in:ORAL,ECRIT',
             'test_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'test_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
             'duration_minutes' => 'required|integer|min:1',
             'total_marks' => 'required|numeric|min:0',
             'passing_marks' => 'required|numeric|min:0|lte:total_marks',
@@ -156,9 +153,6 @@ class TestController extends Controller
             'description' => 'nullable|string',
             'type' => 'required|in:ORAL,ECRIT',
             'test_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'test_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
             'duration_minutes' => 'required|integer|min:1',
             'total_marks' => 'required|numeric|min:0',
             'passing_marks' => 'required|numeric|min:0|lte:total_marks',
@@ -250,10 +244,30 @@ class TestController extends Controller
             }
 
             $levels = Level::with('school')
+                ->whereHas('school', function($query) {
+                    $query->where('is_active', true);
+                })
                 ->where('academic_year_id', $currentAcademicYear->id)
                 ->where('is_active', true)
-                ->orderBy('order')
-                ->get();
+                ->get()
+                ->sortBy(function($level) {
+                    // Create a sorting key based on school name and level order
+                    $schoolPriority = 0;
+                    $schoolName = strtolower($level->school->name ?? '');
+                    
+                    // Define school priority
+                    if (str_contains($schoolName, 'primaire') || str_contains($schoolName, 'primary')) {
+                        $schoolPriority = 1;
+                    } elseif (str_contains($schoolName, 'collège') || str_contains($schoolName, 'college')) {
+                        $schoolPriority = 2;
+                    } elseif (str_contains($schoolName, 'lycée') || str_contains($schoolName, 'lycee') || str_contains($schoolName, 'secondaire')) {
+                        $schoolPriority = 3;
+                    }
+                    
+                    // Return composite sort key: school priority + level order
+                    return ($schoolPriority * 1000) + ($level->order ?? 999);
+                })
+                ->values();
 
             $subjects = Subject::active()->ordered()->get();
 

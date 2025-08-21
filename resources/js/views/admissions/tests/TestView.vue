@@ -86,14 +86,6 @@
               
               <div class="col-md-6">
                 <div class="row mb-3">
-                  <div class="col-sm-4"><strong>Date:</strong></div>
-                  <div class="col-sm-8">{{ formatDate(test.test_date) }}</div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-sm-4"><strong>Horaire:</strong></div>
-                  <div class="col-sm-8">{{ formatTime(test.start_time) }} - {{ formatTime(test.end_time) }}</div>
-                </div>
-                <div class="row mb-3">
                   <div class="col-sm-4"><strong>Durée:</strong></div>
                   <div class="col-sm-8">{{ test.duration_minutes }} minutes</div>
                 </div>

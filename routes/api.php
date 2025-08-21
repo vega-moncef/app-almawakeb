@@ -7,6 +7,7 @@ use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\StudentTestController;
+use App\Http\Controllers\LevelController;
 
 // Academic Year routes
 Route::get('academic-years', [AcademicYearController::class, 'index']);
@@ -42,12 +43,8 @@ Route::delete('student-tests/{studentTest}', [StudentTestController::class, 'una
 Route::get('student-tests/stats', [StudentTestController::class, 'getDashboardStats']);
 
 // Additional utility routes
-Route::get('levels', function() {
-    return response()->json([
-        'success' => true,
-        'data' => \App\Models\Level::with('school')->where('is_active', true)->orderBy('order')->get()
-    ]);
-});
+// Levels routes
+Route::get('levels', [LevelController::class, 'index']);
 
 Route::get('schools', function() {
     return response()->json([

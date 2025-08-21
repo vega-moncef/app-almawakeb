@@ -103,7 +103,7 @@
                 >
                   <option value="">Tous les niveaux</option>
                   <option 
-                    v-for="level in levels" 
+                    v-for="level in sortedLevels" 
                     :key="level.id" 
                     :value="level.id"
                   >
@@ -134,7 +134,6 @@
                     <th>Titre</th>
                     <th>Niveau</th>
                     <th>Type</th>
-                    <th>Date</th>
                     <th>Durée</th>
                     <th>Matières</th>
                     <th>Notes</th>
@@ -144,7 +143,7 @@
                 </thead>
                 <tbody>
                   <tr v-if="loading">
-                    <td colspan="9" class="text-center py-4">
+                    <td colspan="8" class="text-center py-4">
                       <div class="spinner-border spinner-border-sm" role="status">
                         <span class="visually-hidden">Chargement...</span>
                       </div>
@@ -152,7 +151,7 @@
                     </td>
                   </tr>
                   <tr v-else-if="tests.length === 0">
-                    <td colspan="9" class="text-center py-4 text-muted">
+                    <td colspan="8" class="text-center py-4 text-muted">
                       <i class="fas fa-clipboard-list fa-2x mb-3 d-block"></i>
                       Aucun test trouvé
                     </td>
@@ -178,14 +177,6 @@
                       >
                         {{ test.type }}
                       </span>
-                    </td>
-                    <td>
-                      <div>
-                        <div>{{ formatDate(test.test_date) }}</div>
-                        <small class="text-muted">
-                          {{ formatTime(test.start_time) }} - {{ formatTime(test.end_time) }}
-                        </small>
-                      </div>
                     </td>
                     <td>
                       <span class="badge bg-info">
@@ -367,6 +358,11 @@ const visiblePages = computed(() => {
   }
   
   return pages;
+});
+
+const sortedLevels = computed(() => {
+  // The API already filters by current academic year and sorts properly
+  return levels.value;
 });
 
 // Debounced search
