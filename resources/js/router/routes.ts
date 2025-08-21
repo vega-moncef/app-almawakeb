@@ -1007,6 +1007,7 @@ const mapsRoutes = [
 ];
 
 const admissionsRoutes = [
+    // Student Visits
     {
         path: '/admissions/visits',
         name: 'admissions.visits.list',
@@ -1024,6 +1025,93 @@ const admissionsRoutes = [
             authRequired: true
         },
         component: () => import('@/views/admissions/StudentVisitForm.vue')
+    },
+    {
+        path: '/admissions/visits/:id/edit',
+        name: 'admissions.visits.edit',
+        meta: {
+            title: setTitle('Edit Student Visit'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/StudentVisitForm.vue')
+    },
+    
+    // Tests Management
+    {
+        path: '/admissions/tests',
+        name: 'admissions.tests.list',
+        meta: {
+            title: setTitle('Tests Management'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/TestsList.vue')
+    },
+    {
+        path: '/admissions/tests/create',
+        name: 'admissions.tests.create',
+        meta: {
+            title: setTitle('Create Test'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/TestForm.vue')
+    },
+    {
+        path: '/admissions/tests/:id/edit',
+        name: 'admissions.tests.edit',
+        meta: {
+            title: setTitle('Edit Test'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/TestForm.vue')
+    },
+    {
+        path: '/admissions/tests/:id/view',
+        name: 'admissions.tests.view',
+        meta: {
+            title: setTitle('View Test'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/TestView.vue')
+    },
+    {
+        path: '/admissions/tests/:id/assign',
+        name: 'admissions.tests.assign',
+        meta: {
+            title: setTitle('Assign Students'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/StudentTestAssignment.vue')
+    },
+    
+    // Test Results & Admission Decisions
+    {
+        path: '/admissions/test-results',
+        name: 'admissions.test-results.list',
+        meta: {
+            title: setTitle('Test Results'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/TestResultsList.vue')
+    },
+    {
+        path: '/admissions/test-results/:id/edit',
+        name: 'admissions.test-results.edit',
+        meta: {
+            title: setTitle('Edit Test Results'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/TestResultsForm.vue')
+    },
+    
+    // Admission Decisions
+    {
+        path: '/admissions/decisions',
+        name: 'admissions.decisions.list',
+        meta: {
+            title: setTitle('Admission Decisions'),
+            authRequired: true
+        },
+        component: () => import('@/views/admissions/tests/AdmissionDecisions.vue')
     }
 ];
 

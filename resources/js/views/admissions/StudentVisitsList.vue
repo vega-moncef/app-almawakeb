@@ -242,8 +242,12 @@ import PageTitle from "@/components/PageTitle.vue";
 import StatisticsCard from "@/views/property/list/components/StatisticsCard.vue";
 import { Icon } from "@iconify/vue";
 import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAcademicYearFilter } from '@/composables/useAcademicYearFilter';
+
+// Use Vue Router
+const router = useRouter();
 
 // Use academic year filtering composable
 const { addAcademicYearFilter } = useAcademicYearFilter(() => {
@@ -481,9 +485,12 @@ const viewVisit = (visit) => {
 };
 
 const editVisit = (visit) => {
-  // TODO: Implement edit visit navigation
   console.log('Edit visit:', visit);
-  alert(`Modifier la visite de ${visit.student_first_name} ${visit.student_last_name}`);
+  // Navigate to edit form with visit ID using Vue Router
+  router.push({ 
+    name: 'admissions.visits.edit', 
+    params: { id: visit.id } 
+  });
 };
 
 const updateStatus = async (visit, newStatus) => {

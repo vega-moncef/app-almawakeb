@@ -5,7 +5,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">Fiche de Visite - Nouvel Élève</h4>
+            <h4 class="card-title">{{ isEditMode ? 'Modifier Visite Élève' : 'Fiche de Visite - Nouvel Élève' }}</h4>
           </div>
           <div class="card-body">
             <form @submit.prevent="submitForm">
@@ -394,7 +394,7 @@
                     >
                       <i class="fas fa-save"></i>
                       <span v-if="loading">Enregistrement...</span>
-                      <span v-else>Enregistrer la Visite</span>
+                      <span v-else>{{ isEditMode ? 'Mettre à jour la Visite' : 'Enregistrer la Visite' }}</span>
                     </button>
                   </div>
                 </div>
@@ -411,12 +411,22 @@
 <script setup>
 import VerticalLayout from "@/layouts/VerticalLayout.vue";
 import { ref, reactive, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
+// Router and route
+const route = useRoute()
+const router = useRouter()
+
+// Form state
 const loading = ref(false)
 const schools = ref([])
 const levels = ref([])
 const errors = ref({})
+
+// Edit mode detection
+const visitId = computed(() => route.params.id)
+const isEditMode = computed(() => !!visitId.value)
 
 const getCurrentDateTime = () => {
   const now = new Date()
@@ -466,6 +476,11 @@ const filteredLevels = computed(() => {
 onMounted(() => {
   loadFormData()
   
+  // Load visit data if in edit mode
+  if (isEditMode.value) {
+    loadVisitData()
+  }
+  
   // Listen for academic year changes
   window.addEventListener('academic-year-changed', (event) => {
     console.log('Academic year changed, reloading form data...')
@@ -497,8 +512,97 @@ const loadFormData = async () => {
   }
 }
 
-const onSchoolChange = async () => {
-  form.requested_level_id = ''
+// Helper function to format dates for HTML input fields
+const formatDateForInput = (dateString) => {
+  if (!dateString) return ''
+  // Convert ISO date to YYYY-MM-DD format
+  const date = new Date(dateString)
+  return date.toISOString().split('T')[0]
+}
+
+// Helper function to format datetime for HTML datetime-local input fields
+const formatDateTimeForInput = (dateString) => {
+  if (!dateString) return ''
+  // Convert ISO date to YYYY-MM-DDTHH:mm format
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+const loadVisitData = async () => {
+  console.log('🔄 Loading visit data for ID:', visitId.value)
+  try {
+    const response = await axios.get(`/api/student-visits/${visitId.value}`)
+    console.log('📥 Visit data response:', response.data)
+    
+    if (response.data.success) {
+      const visit = response.data.data
+      
+      // Populate form with visit data - format dates properly
+      Object.assign(form, {
+        student_first_name: visit.student_first_name,
+        student_last_name: visit.student_last_name,
+        student_gender: visit.student_gender,
+        birth_date: formatDateForInput(visit.birth_date),
+        birth_place: visit.birth_place,
+        city: visit.city,
+        current_school: visit.current_school,
+        current_level: visit.current_level,
+        repeat_count: visit.repeat_count,
+        father_first_name: visit.father_first_name,
+        father_last_name: visit.father_last_name,
+        father_phone: visit.father_phone,
+        father_email: visit.father_email,
+        father_profession: visit.father_profession,
+        mother_first_name: visit.mother_first_name,
+        mother_last_name: visit.mother_last_name,
+        mother_phone: visit.mother_phone,
+        mother_email: visit.mother_email,
+        mother_profession: visit.mother_profession,
+        requested_school_id: visit.requested_school_id,
+        requested_level_id: visit.requested_level_id,
+        observations: visit.observations,
+        visit_date: formatDateTimeForInput(visit.visit_date),
+        test_date: formatDateTimeForInput(visit.test_date)
+      })
+      
+      // Load levels for the selected school and preserve the level ID
+      if (visit.requested_school_id) {
+        await onSchoolChange(true) // true = preserve current level
+      }
+      
+      console.log('✅ Visit data loaded successfully')
+      console.log('📅 Formatted dates:', {
+        birth_date: form.birth_date,
+        visit_date: form.visit_date,
+        test_date: form.test_date
+      })
+      console.log('🏫 School and level:', {
+        requested_school_id: form.requested_school_id,
+        requested_level_id: form.requested_level_id,
+        levels_count: levels.value.length
+      })
+    } else {
+      throw new Error('Failed to load visit data')
+    }
+  } catch (error) {
+    console.error('❌ Error loading visit data:', error)
+    alert('Erreur lors du chargement de la visite: ' + (error.response?.data?.message || error.message))
+    // Redirect back to list if visit not found
+    router.push({ name: 'admissions.visits.list' })
+  }
+}
+
+const onSchoolChange = async (preserveLevel = false) => {
+  const currentLevelId = preserveLevel ? form.requested_level_id : ''
+  
+  if (!preserveLevel) {
+    form.requested_level_id = ''
+  }
   levels.value = []
   
   if (form.requested_school_id) {
@@ -506,6 +610,16 @@ const onSchoolChange = async () => {
       const response = await axios.get(`/api/schools/${form.requested_school_id}/levels`)
       if (response.data.success) {
         levels.value = response.data.data
+        console.log('Levels loaded for school:', levels.value)
+        
+        // If preserving level and the level exists in the loaded levels, restore it
+        if (preserveLevel && currentLevelId) {
+          const levelExists = levels.value.some(level => level.id == currentLevelId)
+          if (levelExists) {
+            form.requested_level_id = currentLevelId
+            console.log('Restored level ID:', currentLevelId)
+          }
+        }
       }
     } catch (error) {
       console.error('Error loading levels:', error)
@@ -519,11 +633,28 @@ const submitForm = async () => {
   errors.value = {}
 
   try {
-    const response = await axios.post('/api/student-visits', form)
+    let response
+    
+    if (isEditMode.value) {
+      // Update existing visit
+      response = await axios.put(`/api/student-visits/${visitId.value}`, form)
+    } else {
+      // Create new visit
+      response = await axios.post('/api/student-visits', form)
+    }
     
     if (response.data.success) {
-      alert('Fiche de visite enregistrée avec succès!')
-      resetForm()
+      const message = isEditMode.value 
+        ? 'Visite mise à jour avec succès!' 
+        : 'Fiche de visite enregistrée avec succès!'
+      alert(message)
+      
+      if (isEditMode.value) {
+        // Redirect to list after successful update
+        router.push({ name: 'admissions.visits.list' })
+      } else {
+        resetForm()
+      }
     } else {
       alert('Erreur lors de l\'enregistrement')
     }
@@ -533,7 +664,8 @@ const submitForm = async () => {
       errors.value = error.response.data.errors || {}
       alert('Veuillez corriger les erreurs dans le formulaire')
     } else {
-      alert('Erreur lors de l\'enregistrement: ' + (error.response?.data?.message || error.message))
+      const action = isEditMode.value ? 'mise à jour' : 'enregistrement'
+      alert(`Erreur lors de la ${action}: ` + (error.response?.data?.message || error.message))
       console.error('Submission error:', error)
     }
   } finally {

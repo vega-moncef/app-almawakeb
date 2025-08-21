@@ -15,30 +15,58 @@ export const MENU_ITEMS: MenuItemType[] = [
 
 
 
+    
     {
         key: 'admissions',
         icon: 'ri-user-add-line',
         label: 'Admissions',
         children: [
             {
-                key: 'admissions-visits-list',
-                label: 'Student Visits',
-                route: {name: 'admissions.visits.list'},
-                parentKey: 'admissions'
+                key: 'admissions-visits',
+                label: 'Visites Élèves',
+                children: [
+                    {
+                        key: 'admissions-visits-list',
+                        label: 'Toutes les Visites',
+                        route: { name: 'admissions.visits.list' },
+                        parentKey: 'admissions-visits'
+                    },
+                    {
+                        key: 'admissions-visits-create',
+                        label: 'Nouvelle Visite',
+                        route: { name: 'admissions.visits.create' },
+                        parentKey: 'admissions-visits'
+                    }
+                ]
             },
             {
-                key: 'admissions-visits-create',
-                label: 'New Student Visit',
-                route: {name: 'admissions.visits.create'},
-                parentKey: 'admissions'
+                key: 'admissions-tests',
+                label: 'Tests',
+                children: [
+                    {
+                        key: 'admissions-tests-list',
+                        label: 'Liste des Tests',
+                        route: { name: 'admissions.tests.list' },
+                        parentKey: 'admissions-tests'
+                    },
+                    {
+                        key: 'admissions-test-results',
+                        label: 'Résultats des Tests',
+                        route: { name: 'admissions.test-results.list' },
+                        parentKey: 'admissions-tests'
+                    }
+                ]
             },
-             {
-                key: 'admissions-visits-list',
-                label: 'Tests & Résultats',
+            {
+                key: 'admissions-decisions',
+                label: 'Décisions d’Admission',
+                route: { name: 'admissions.decisions.list' },
                 parentKey: 'admissions'
-            },
-        ],
+            }
+        ]
     },
+
+
 
 
     {
