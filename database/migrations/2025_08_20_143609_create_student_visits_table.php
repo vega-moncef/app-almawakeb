@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('current_school')->nullable();
             $table->string('current_level')->nullable();
             $table->string('city')->default('MARRAKECH');
-            $table->boolean('is_repeating')->default(false);
+            $table->integer('repeat_count')->default(0);
             
             // Father info
             $table->string('father_first_name');

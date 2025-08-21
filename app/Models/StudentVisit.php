@@ -20,7 +20,7 @@ class StudentVisit extends Model
         'current_school', 
         'current_level',
         'city', 
-        'is_repeating', 
+        'repeat_count', 
         'father_first_name', 
         'father_last_name',
         'father_phone', 
@@ -44,7 +44,7 @@ class StudentVisit extends Model
         'birth_date' => 'date',
         'visit_date' => 'datetime',
         'test_date' => 'datetime',
-        'is_repeating' => 'boolean',
+        'repeat_count' => 'integer',
     ];
 
     // Relationships
