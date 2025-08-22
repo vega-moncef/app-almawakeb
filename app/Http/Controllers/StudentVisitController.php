@@ -43,8 +43,41 @@ class StudentVisitController extends Controller
                 });
             }
 
-            // Order by most recent visits
+            // Default sorting
             $query->orderBy('visit_date', 'desc');
+
+            // Get status counts for all visits (not just current page)
+            $baseQuery = StudentVisit::with(['requestedSchool', 'requestedLevel']);
+            
+            // Apply same filters for counts
+            if ($request->filled('status')) {
+                $baseQuery->where('status', $request->status);
+            }
+            if ($request->filled('school_id')) {
+                $baseQuery->where('requested_school_id', $request->school_id);
+            }
+            if ($request->filled('academic_year_id')) {
+                $baseQuery->where('academic_year_id', $request->academic_year_id);
+            }
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $baseQuery->where(function ($q) use ($search) {
+                    $q->where('student_first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('student_last_name', 'LIKE', "%{$search}%")
+                        ->orWhere('father_first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('father_last_name', 'LIKE', "%{$search}%")
+                        ->orWhere('mother_first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('mother_last_name', 'LIKE', "%{$search}%");
+                });
+            }
+
+            $statusCounts = [
+                'pending' => (clone $baseQuery)->where('status', 'pending')->count(),
+                'test_scheduled' => (clone $baseQuery)->where('status', 'test_scheduled')->count(),
+                'tested' => (clone $baseQuery)->where('status', 'tested')->count(),
+                'accepted' => (clone $baseQuery)->where('status', 'accepted')->count(),
+                'rejected' => (clone $baseQuery)->where('status', 'rejected')->count()
+            ];
 
             // Pagination
             $perPage = $request->get('per_page', 15);
@@ -53,6 +86,7 @@ class StudentVisitController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $visits,
+                'status_counts' => $statusCounts,
                 'message' => 'Student visits retrieved successfully'
             ]);
 

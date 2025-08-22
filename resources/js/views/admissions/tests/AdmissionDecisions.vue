@@ -257,7 +257,7 @@
                     </td>
                     <td>
                       <small class="text-muted">
-                        {{ formatDate(decision.completed_at) }}
+                        {{ formatDate(decision.student_visit?.test_date) }}
                       </small>
                     </td>
                     <td class="text-center">

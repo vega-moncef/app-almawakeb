@@ -19,9 +19,6 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->enum('type', ['ORAL', 'ECRIT']); // Test type
             $table->string('test_file')->nullable(); // Uploaded test file
-            $table->date('test_date');
-            $table->time('start_time');
-            $table->time('end_time');
             $table->integer('duration_minutes'); // Test duration
             $table->decimal('total_marks', 8, 2)->default(20); // Total marks for the test
             $table->decimal('passing_marks', 8, 2)->default(10); // Minimum marks to pass

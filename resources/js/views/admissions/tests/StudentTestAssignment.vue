@@ -221,6 +221,22 @@
                 <small class="text-muted">Par défaut: maintenant</small>
               </div>
               
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Date du test <span class="text-danger">*</span></label>
+                <input 
+                  type="datetime-local" 
+                  class="form-control" 
+                  v-model="assignmentOptions.test_date"
+                  required
+                >
+                <small class="text-muted" v-if="existingTestDates.length > 0">
+                  Date(s) programmée(s): {{ existingTestDates.join(', ') }}
+                </small>
+                <small class="text-muted" v-else>
+                  Date et heure prévues pour le test
+                </small>
+              </div>
+              
               <div class="col-12 mb-3">
                 <label class="form-label">Notes d'assignation</label>
                 <textarea 
@@ -346,7 +362,7 @@
 <script setup>
 import VerticalLayout from "@/layouts/VerticalLayout.vue";
 import { Icon } from "@iconify/vue";
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -373,6 +389,7 @@ const filters = reactive({
 
 const assignmentOptions = reactive({
   assigned_at: getCurrentDateTime(),
+  test_date: '',
   notes: ''
 })
 
@@ -381,6 +398,44 @@ const availableStudents = computed(() => {
   // Filter out students who are already assigned to this test
   const assignedIds = assignedStudents.value.map(a => a.student_visit_id)
   return studentVisits.value.filter(student => !assignedIds.includes(student.id))
+})
+
+const existingTestDates = computed(() => {
+  const selectedVisits = studentVisits.value.filter(visit => 
+    selectedStudents.value.includes(visit.id) && visit.test_date
+  )
+  const uniqueDates = [...new Set(selectedVisits.map(visit => 
+    formatDateTime(visit.test_date)
+  ))]
+  return uniqueDates
+})
+
+const mostCommonTestDate = computed(() => {
+  const selectedVisits = studentVisits.value.filter(visit => 
+    selectedStudents.value.includes(visit.id) && visit.test_date
+  )
+  
+  if (selectedVisits.length === 0) return ''
+  
+  // Find most common test_date
+  const dateCounts = {}
+  selectedVisits.forEach(visit => {
+    const date = visit.test_date
+    dateCounts[date] = (dateCounts[date] || 0) + 1
+  })
+  
+  const mostCommon = Object.keys(dateCounts).reduce((a, b) => 
+    dateCounts[a] > dateCounts[b] ? a : b
+  )
+  
+  return formatDateTimeForInput(mostCommon)
+})
+
+// Watchers
+watch(mostCommonTestDate, (newDate) => {
+  if (newDate && !assignmentOptions.test_date) {
+    assignmentOptions.test_date = newDate
+  }
 })
 
 // Lifecycle
@@ -479,12 +534,19 @@ const toggleSelectAll = (event) => {
 
 const assignStudents = async () => {
   if (selectedStudents.value.length === 0) return
+  
+  // Validate required test date
+  if (!assignmentOptions.test_date) {
+    alert('Veuillez sélectionner une date de test')
+    return
+  }
 
   loading.value = true
   try {
     const payload = {
       student_visit_ids: selectedStudents.value,
       assigned_at: assignmentOptions.assigned_at || getCurrentDateTime(),
+      test_date: assignmentOptions.test_date,
       notes: assignmentOptions.notes
     }
 
@@ -496,6 +558,7 @@ const assignStudents = async () => {
       // Reload data
       await loadAssignedStudents()
       selectedStudents.value = []
+      assignmentOptions.test_date = ''
       assignmentOptions.notes = ''
     }
   } catch (error) {
@@ -533,6 +596,17 @@ function getCurrentDateTime() {
   const now = new Date()
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
   return now.toISOString().slice(0, 16)
+}
+
+const formatDateTimeForInput = (datetime) => {
+  if (!datetime) return ''
+  const date = new Date(datetime)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
 const formatDate = (date) => {

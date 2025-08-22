@@ -18,6 +18,7 @@ class StudentTestController extends Controller
             'student_visit_ids' => 'required|array|min:1',
             'student_visit_ids.*' => 'exists:student_visits,id',
             'assigned_at' => 'nullable|date',
+            'test_date' => 'required|date',
             'notes' => 'nullable|string'
         ]);
 
@@ -40,6 +41,14 @@ class StudentTestController extends Controller
                             'notes' => $validatedData['notes'],
                             'status' => 'assigned'
                         ]);
+                        
+                        // Update student visit status to test_scheduled and set test_date
+                        StudentVisit::where('id', $studentVisitId)
+                            ->update([
+                                'status' => 'test_scheduled',
+                                'test_date' => $validatedData['test_date']
+                            ]);
+                        
                         $assignedCount++;
                     }
                 }
@@ -89,7 +98,7 @@ class StudentTestController extends Controller
     public function unassignStudent($studentTestId)
     {
         try {
-            $studentTest = StudentTest::findOrFail($studentTestId);
+            $studentTest = StudentTest::with(['studentVisit'])->findOrFail($studentTestId);
             
             // Check if test has been started or completed
             if (in_array($studentTest->status, ['in_progress', 'completed'])) {
@@ -99,6 +108,12 @@ class StudentTestController extends Controller
                 ], 400);
             }
 
+            // Update student visit status back to pending and clear test_date when unassigned
+            $studentTest->studentVisit->update([
+                'status' => 'pending',
+                'test_date' => null
+            ]);
+            
             $studentTest->delete();
 
             return response()->json([
@@ -145,6 +160,13 @@ class StudentTestController extends Controller
                 });
             }
 
+            // Filter by academic year through test relationship
+            if ($request->filled('academic_year_id')) {
+                $query->whereHas('test', function ($q) use ($request) {
+                    $q->where('academic_year_id', $request->academic_year_id);
+                });
+            }
+
             $query->orderBy('created_at', 'desc');
 
             $perPage = $request->get('per_page', 15);
@@ -169,8 +191,7 @@ class StudentTestController extends Controller
     {
         $validatedData = $request->validate([
             'status' => 'required|in:assigned,in_progress,completed,absent',
-            'started_at' => 'nullable|date',
-            'completed_at' => 'nullable|date',
+            'test_date' => 'nullable|date',
             'notes' => 'nullable|string',
             'results' => 'array',
             'results.*.subject_id' => 'required|exists:subjects,id',
@@ -189,12 +210,11 @@ class StudentTestController extends Controller
                     'notes' => $validatedData['notes'] ?? null,
                 ];
 
-                if (isset($validatedData['started_at'])) {
-                    $updateData['started_at'] = $validatedData['started_at'];
-                }
-
-                if (isset($validatedData['completed_at'])) {
-                    $updateData['completed_at'] = $validatedData['completed_at'];
+                // Update test_date in student_visits table if provided
+                if (isset($validatedData['test_date'])) {
+                    $studentTest->studentVisit->update([
+                        'test_date' => $validatedData['test_date']
+                    ]);
                 }
 
                 // Calculate total score if results provided
@@ -208,6 +228,11 @@ class StudentTestController extends Controller
                 }
 
                 $studentTest->update($updateData);
+
+                // Update student visit status to "tested" if test is completed
+                if ($validatedData['status'] === 'completed') {
+                    $studentTest->studentVisit->update(['status' => 'tested']);
+                }
 
                 // Update individual subject results
                 if (isset($validatedData['results'])) {
@@ -279,17 +304,27 @@ class StudentTestController extends Controller
         }
     }
 
-    public function getDashboardStats()
+    public function getDashboardStats(Request $request)
     {
         try {
+            // Base query
+            $baseQuery = StudentTest::query();
+            
+            // Filter by academic year through test relationship if provided
+            if ($request->filled('academic_year_id')) {
+                $baseQuery->whereHas('test', function ($q) use ($request) {
+                    $q->where('academic_year_id', $request->academic_year_id);
+                });
+            }
+            
             $stats = [
-                'total_assignments' => StudentTest::count(),
-                'completed_tests' => StudentTest::where('status', 'completed')->count(),
-                'pending_tests' => StudentTest::where('status', 'assigned')->count(),
-                'passed_students' => StudentTest::where('passed', true)->count(),
-                'accepted_students' => StudentTest::where('admission_decision', 'accepted')->count(),
-                'rejected_students' => StudentTest::where('admission_decision', 'rejected')->count(),
-                'pending_decisions' => StudentTest::where('admission_decision', 'pending')
+                'total_assignments' => (clone $baseQuery)->count(),
+                'completed_tests' => (clone $baseQuery)->where('status', 'completed')->count(),
+                'pending_tests' => (clone $baseQuery)->where('status', 'assigned')->count(),
+                'passed_students' => (clone $baseQuery)->where('passed', true)->count(),
+                'accepted_students' => (clone $baseQuery)->where('admission_decision', 'accepted')->count(),
+                'rejected_students' => (clone $baseQuery)->where('admission_decision', 'rejected')->count(),
+                'pending_decisions' => (clone $baseQuery)->where('admission_decision', 'pending')
                     ->where('status', 'completed')->count()
             ];
 

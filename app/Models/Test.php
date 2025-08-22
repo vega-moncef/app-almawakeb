@@ -16,9 +16,6 @@ class Test extends Model
         'description',
         'type',
         'test_file',
-        'test_date',
-        'start_time',
-        'end_time',
         'duration_minutes',
         'total_marks',
         'passing_marks',
@@ -27,9 +24,6 @@ class Test extends Model
     ];
 
     protected $casts = [
-        'test_date' => 'date',
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i',
         'duration_minutes' => 'integer',
         'total_marks' => 'decimal:2',
         'passing_marks' => 'decimal:2',
@@ -83,17 +77,6 @@ class Test extends Model
     }
 
     // Helper methods
-    public function getFormattedDateAttribute()
-    {
-        return $this->test_date ? $this->test_date->format('d/m/Y') : '';
-    }
-
-    public function getFormattedTimeAttribute()
-    {
-        return $this->start_time && $this->end_time 
-            ? $this->start_time->format('H:i') . ' - ' . $this->end_time->format('H:i')
-            : '';
-    }
 
     public function getTypeColorAttribute()
     {
@@ -103,7 +86,6 @@ class Test extends Model
     public function getStatusColorAttribute()
     {
         if (!$this->is_active) return 'secondary';
-        if ($this->test_date->isPast()) return 'warning';
         return 'success';
     }
 }

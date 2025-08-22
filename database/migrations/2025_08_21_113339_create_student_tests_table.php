@@ -17,8 +17,6 @@ return new class extends Migration
             $table->foreignId('test_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['assigned', 'in_progress', 'completed', 'absent'])->default('assigned');
             $table->datetime('assigned_at');
-            $table->datetime('started_at')->nullable();
-            $table->datetime('completed_at')->nullable();
             $table->decimal('total_score', 8, 2)->nullable(); // Total score obtained
             $table->decimal('percentage', 5, 2)->nullable(); // Percentage score
             $table->boolean('passed')->nullable(); // Whether student passed

@@ -184,7 +184,7 @@
                     </td>
                     <td>
                       <small class="text-muted">
-                        {{ result.started_at ? formatDateTime(result.started_at) : '-' }}
+                        {{ result.student_visit?.test_date ? formatDateTime(result.student_visit.test_date) : '-' }}
                       </small>
                     </td>
                     <td>
@@ -511,7 +511,8 @@ const loadTests = async () => {
 
 const loadStats = async () => {
   try {
-    const response = await axios.get('/api/student-tests/stats');
+    const params = addAcademicYearFilter({});
+    const response = await axios.get('/api/student-tests/stats', { params });
     
     if (response.data.success) {
       stats.value = response.data.data || {};

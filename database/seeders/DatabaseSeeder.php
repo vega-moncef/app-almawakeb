@@ -16,12 +16,14 @@ class DatabaseSeeder extends Seeder
             AcademicYearSeeder::class,  // First: Create academic years
             SchoolSeeder::class,        // Second: Create schools
             LevelSeeder::class,         // Third: Create levels (depends on schools and academic years)
+            SubjectSeeder::class,       // Fourth: Create subjects
         ]);
 
         $this->command->info('✅ Basic school structure seeded successfully!');
         $this->command->info('📅 Academic years: 2022-2023 to 2026-2027');
         $this->command->info('🏫 Schools: Primary, College, Lycee');
         $this->command->info('📚 Levels created for all years');
+        $this->command->info('📖 Subjects: 12 subjects created (Arabe, Français, Math, etc.)');
         $this->command->info('🎯 Current academic year: 2024-2025');
     }
 }

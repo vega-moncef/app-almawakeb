@@ -236,6 +236,7 @@
   </VerticalLayout>
 </template>
 
+
 <script setup lang="ts">
 import VerticalLayout from "@/layouts/VerticalLayout.vue";
 import PageTitle from "@/components/PageTitle.vue";
@@ -367,8 +368,10 @@ const loadVisits = async () => {
       pagination.current_page = response.data.data.current_page;
       totalVisits.value = response.data.data.total;
       
-      // Update status counts
-      updateStatusCounts();
+      // Update status counts from backend response
+      if (response.data.status_counts) {
+        statusCounts.value = response.data.status_counts;
+      }
     }
   } catch (error) {
     console.error('Error loading visits:', error);
@@ -378,24 +381,7 @@ const loadVisits = async () => {
   }
 };
 
-// Update status counts from loaded visits
-const updateStatusCounts = () => {
-  const counts = {
-    pending: 0,
-    test_scheduled: 0,
-    tested: 0,
-    accepted: 0,
-    rejected: 0
-  };
-
-  visits.value.forEach(visit => {
-    if (counts.hasOwnProperty(visit.status)) {
-      counts[visit.status]++;
-    }
-  });
-
-  statusCounts.value = counts;
-};
+// Note: Status counts are now fetched from backend
 
 // Debounced search
 let searchTimeout;
@@ -500,12 +486,8 @@ const updateStatus = async (visit, newStatus) => {
     });
     
     if (response.data.success) {
-      // Update local visit status
-      const index = visits.value.findIndex(v => v.id === visit.id);
-      if (index !== -1) {
-        visits.value[index].status = newStatus;
-      }
-      updateStatusCounts();
+      // Reload visits to get updated counts and data
+      loadVisits();
       alert('Statut mis à jour avec succès');
     }
   } catch (error) {

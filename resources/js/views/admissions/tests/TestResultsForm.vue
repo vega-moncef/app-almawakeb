@@ -96,32 +96,23 @@
                   </div>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                  <label class="form-label">Heure de début</label>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Date du test</label>
                   <input 
                     type="datetime-local" 
                     class="form-control" 
-                    v-model="form.started_at"
-                    :class="{ 'is-invalid': errors.started_at }"
+                    v-model="form.test_date"
+                    :class="{ 'is-invalid': errors.test_date }"
+                    :placeholder="studentTest?.student_visit?.test_date ? 'Date programmée' : 'Sélectionner la date du test'"
                   >
-                  <div v-if="errors.started_at" class="invalid-feedback">
-                    {{ errors.started_at[0] }}
+                  <small class="text-muted">
+                    {{ studentTest?.student_visit?.test_date ? 'Date programmée lors de l\'assignation' : 'Aucune date programmée - veuillez saisir la date du test' }}
+                  </small>
+                  <div v-if="errors.test_date" class="invalid-feedback">
+                    {{ errors.test_date[0] }}
                   </div>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                  <label class="form-label">Heure de fin</label>
-                  <input 
-                    type="datetime-local" 
-                    class="form-control" 
-                    v-model="form.completed_at"
-                    :class="{ 'is-invalid': errors.completed_at }"
-                    :disabled="form.status !== 'completed'"
-                  >
-                  <div v-if="errors.completed_at" class="invalid-feedback">
-                    {{ errors.completed_at[0] }}
-                  </div>
-                </div>
               </div>
 
               <!-- Subject Results -->
@@ -340,8 +331,7 @@ const studentTestId = computed(() => route.params.id)
 
 const form = reactive({
   status: 'assigned',
-  started_at: '',
-  completed_at: '',
+  test_date: '',
   notes: '',
   results: []
 })
@@ -383,8 +373,12 @@ const loadStudentTest = async () => {
       
       // Populate form with existing data
       form.status = testData.status || 'assigned'
-      form.started_at = formatDateTimeForInput(testData.started_at)
-      form.completed_at = formatDateTimeForInput(testData.completed_at)
+      
+      // Use programmed test date from studentVisit.test_date if available
+      form.test_date = testData.student_visit?.test_date 
+        ? formatDateTimeForInput(testData.student_visit.test_date)
+        : ''
+      
       form.notes = testData.notes || ''
       
       // Load test subjects to initialize results
@@ -417,8 +411,7 @@ const submitResults = async () => {
   try {
     const payload = {
       status: form.status,
-      started_at: form.started_at || null,
-      completed_at: form.completed_at || null,
+      test_date: form.test_date || null,
       notes: form.notes,
       results: form.status === 'completed' ? form.results : []
     }

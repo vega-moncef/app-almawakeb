@@ -14,8 +14,6 @@ class StudentTest extends Model
         'test_id',
         'status',
         'assigned_at',
-        'started_at',
-        'completed_at',
         'total_score',
         'percentage',
         'passed',
@@ -25,8 +23,6 @@ class StudentTest extends Model
 
     protected $casts = [
         'assigned_at' => 'datetime',
-        'started_at' => 'datetime',
-        'completed_at' => 'datetime',
         'total_score' => 'decimal:2',
         'percentage' => 'decimal:2',
         'passed' => 'boolean'
