@@ -1115,4 +1115,46 @@ const admissionsRoutes = [
     }
 ];
 
-export const allRoutes = [...authRoutes, ...errorRoutes, ...dashboardRoutes,...propertyRoutes,...agentsRoutes,...customersRoutes,...appsRoutes, ...pagesRoutes, ...uiRoutes, ...advancedUIRoutes, ...chartsRoutes, ...formRoutes, ...tablesRoutes, ...iconsRoutes, ...mapsRoutes, ...admissionsRoutes, ...layoutRoutes];
+const academicRoutes = [
+    {
+        path: '/academic/classes',
+        name: 'academic.classes.list',
+        meta: {
+            title: setTitle('Classes & Sections'),
+            authRequired: true
+        },
+        component: () => import('@/views/academic/ClassesList.vue')
+    }
+];
+
+const studentsRoutes = [
+    {
+        path: '/students',
+        name: 'students.list',
+        meta: {
+            title: setTitle('Élèves Inscrits - Liste'),
+            authRequired: true
+        },
+        component: () => import('@/views/students/StudentsList.vue')
+    },
+    {
+        path: '/students/grid',
+        name: 'students.grid',
+        meta: {
+            title: setTitle('Élèves Inscrits - Grille'),
+            authRequired: true
+        },
+        component: () => import('@/views/students/StudentsGrid.vue')
+    },
+    {
+        path: '/students/:id',
+        name: 'student-detail',
+        meta: {
+            title: setTitle('Détails Élève'),
+            authRequired: true
+        },
+        component: () => import('@/views/students/StudentDetail.vue')
+    }
+];
+
+export const allRoutes = [...authRoutes, ...errorRoutes, ...dashboardRoutes,...propertyRoutes,...agentsRoutes,...customersRoutes,...appsRoutes, ...pagesRoutes, ...uiRoutes, ...advancedUIRoutes, ...chartsRoutes, ...formRoutes, ...tablesRoutes, ...iconsRoutes, ...mapsRoutes, ...admissionsRoutes, ...academicRoutes, ...studentsRoutes, ...layoutRoutes];

@@ -28,6 +28,7 @@ declare module 'vue' {
     BForm: typeof import('bootstrap-vue-next/components/BForm')['BForm']
     BFormCheckbox: typeof import('bootstrap-vue-next/components/BFormCheckbox')['BFormCheckbox']
     BFormCheckboxGroup: typeof import('bootstrap-vue-next/components/BFormCheckbox')['BFormCheckboxGroup']
+    BFormFile: typeof import('bootstrap-vue-next/components/BFormFile')['BFormFile']
     BFormGroup: typeof import('bootstrap-vue-next/components/BFormGroup')['BFormGroup']
     BFormInput: typeof import('bootstrap-vue-next/components/BFormInput')['BFormInput']
     BFormInvalidFeedback: typeof import('bootstrap-vue-next/components/BForm')['BFormInvalidFeedback']
@@ -45,7 +46,10 @@ declare module 'vue' {
     BProgressBar: typeof import('bootstrap-vue-next/components/BProgress')['BProgressBar']
     BRow: typeof import('bootstrap-vue-next/components/BContainer')['BRow']
     BSpinner: typeof import('bootstrap-vue-next/components/BSpinner')['BSpinner']
+    BTab: typeof import('bootstrap-vue-next/components/BTabs')['BTab']
+    BTable: typeof import('bootstrap-vue-next/components/BTable')['BTable']
     BTableSimple: typeof import('bootstrap-vue-next/components/BTable')['BTableSimple']
+    BTabs: typeof import('bootstrap-vue-next/components/BTabs')['BTabs']
     BTbody: typeof import('bootstrap-vue-next/components/BTable')['BTbody']
     BTd: typeof import('bootstrap-vue-next/components/BTable')['BTd']
     BTfoot: typeof import('bootstrap-vue-next/components/BTable')['BTfoot']
@@ -57,5 +61,6 @@ declare module 'vue' {
   }
   export interface ComponentCustomProperties {
     vBToggle: typeof import('bootstrap-vue-next/directives/BToggle')['vBToggle']
+    vBTooltip: typeof import('bootstrap-vue-next/directives/BTooltip')['vBTooltip']
   }
 }

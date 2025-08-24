@@ -12,19 +12,24 @@ class SchoolSeeder extends Seeder
     {
         $schools = [
             [
-                'name' => 'Primary',
+                'name' => 'Maternelle',
+                'code' => 'MAT',
+                'description' => 'École Maternelle - Petite, Moyenne et Grande Section'
+            ],
+            [
+                'name' => 'Primaire',
                 'code' => 'PRI',
-                'description' => 'Primary School - Grades 1 to 6'
+                'description' => 'École Primaire - CP, CE1, CE2, CM1, CM2'
             ],
             [
-                'name' => 'College',
+                'name' => 'Collège',
                 'code' => 'COL',
-                'description' => 'College School - 1APIC to 3APIC'
+                'description' => 'Collège - 6ème, 5ème, 4ème, 3ème'
             ],
             [
-                'name' => 'Lycee',
+                'name' => 'Lycée',
                 'code' => 'LYC',
-                'description' => 'Lycee School - TC to 2BAC'
+                'description' => 'Lycée - Seconde, Première, Terminale'
             ]
         ];
 

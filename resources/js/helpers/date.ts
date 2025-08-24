@@ -42,3 +42,16 @@ export const timeSince = (date: Date) => {
 
   return `${interval} ${intervalType} ago`
 }
+
+export const formatDate = (date: string | Date) => {
+  if (!date) return ''
+  
+  const d = new Date(date)
+  if (isNaN(d.getTime())) return ''
+  
+  return d.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
+}

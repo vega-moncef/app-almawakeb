@@ -90,8 +90,9 @@ export const MENU_ITEMS: MenuItemType[] = [
                 parentKey: 'academic-management'
             },
             {
-                key: 'admissions-visits-create',
+                key: 'academic-classes',
                 label: 'Classes & Sections',
+                route: { name: 'academic.classes.list' },
                 parentKey: 'academic-management'
             },
                         {
@@ -109,9 +110,23 @@ export const MENU_ITEMS: MenuItemType[] = [
         label: 'Élèves',
         children: [
             {
-                key: 'academic-years',
+                key: 'students-enrolled',
                 label: 'Élèves Inscrits',
-                parentKey: 'Students'
+                parentKey: 'Students',
+                children: [
+                    {
+                        key: 'students-list',
+                        label: 'Élèves Liste',
+                        route: { name: 'students.list' },
+                        parentKey: 'students-enrolled'
+                    },
+                    {
+                        key: 'students-grid',
+                        label: 'Élèves Grille',
+                        route: { name: 'students.grid' },
+                        parentKey: 'students-enrolled'
+                    }
+                ]
             },
             {
                 key: 'admissions-visits-create',

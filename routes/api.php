@@ -8,6 +8,8 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\StudentTestController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\ClassController;
+use App\Http\Controllers\StudentController;
 
 // Academic Year routes
 Route::get('academic-years', [AcademicYearController::class, 'index']);
@@ -45,6 +47,22 @@ Route::get('student-tests/stats', [StudentTestController::class, 'getDashboardSt
 // Additional utility routes
 // Levels routes
 Route::get('levels', [LevelController::class, 'index']);
+
+// Classes routes
+Route::get('classes', [ClassController::class, 'index']);
+Route::post('classes', [ClassController::class, 'store']);
+Route::put('classes/{class}', [ClassController::class, 'update']);
+Route::delete('classes/{class}', [ClassController::class, 'destroy']);
+Route::get('levels-by-school', [ClassController::class, 'getLevelsBySchool']);
+
+// Students - Routes spécifiques AVANT les routes resource
+Route::get('students/accepted-visits', [StudentController::class, 'getAcceptedVisits']);
+Route::get('students/classes', [StudentController::class, 'getClasses']);
+Route::get('students/stats', [StudentController::class, 'stats']);
+Route::post('students/create-from-visit', [StudentController::class, 'createFromVisit']);
+
+// Students - Route resource APRÈS les routes spécifiques
+Route::apiResource('students', StudentController::class);
 
 Route::get('schools', function() {
     return response()->json([

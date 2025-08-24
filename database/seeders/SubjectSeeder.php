@@ -25,7 +25,11 @@ class SubjectSeeder extends Seeder
             ['name' => 'Sciences de la Vie et de la Terre', 'code' => 'SVT', 'description' => 'Biologie et géologie', 'order' => 9],
             ['name' => 'Philosophie', 'code' => 'PHILO', 'description' => 'Philosophie', 'order' => 10],
             ['name' => 'Économie', 'code' => 'ECO', 'description' => 'Sciences économiques', 'order' => 11],
-            ['name' => 'Comptabilité', 'code' => 'COMPTA', 'description' => 'Comptabilité', 'order' => 12]
+            ['name' => 'Comptabilité', 'code' => 'COMPTA', 'description' => 'Comptabilité', 'order' => 12],
+            ['name' => 'Informatique et Robotique', 'code' => 'INFO', 'description' => 'Informatique et robotique', 'order' => 13],
+            ['name' => 'Art Plastique', 'code' => 'ART', 'description' => 'Arts plastiques et visuels', 'order' => 14],
+            ['name' => 'Sport', 'code' => 'SPORT', 'description' => 'Éducation physique et sportive', 'order' => 15],
+            ['name' => 'Danse', 'code' => 'DANCE', 'description' => 'Danse et expression corporelle', 'order' => 16]
         ];
 
         foreach ($subjects as $subject) {

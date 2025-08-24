@@ -63,6 +63,11 @@ class StudentVisit extends Model
         return $this->belongsTo(Level::class, 'requested_level_id');
     }
 
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
     // Helper methods
     public function getFullNameAttribute()
     {
