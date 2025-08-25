@@ -558,7 +558,7 @@
         <!-- Academic & Services -->
         <BTab title="Académique & Services">
           <BRow>
-            <BCol md="6">
+            <BCol md="4">
               <BFormGroup
                 label="Date d'inscription *"
                 label-for="enrollment-date"
@@ -574,7 +574,20 @@
                 />
               </BFormGroup>
             </BCol>
-            <BCol md="6">
+            <BCol md="4">
+              <BFormGroup
+                label="Niveau"
+                label-for="level-id"
+              >
+                <BFormSelect
+                  id="level-id"
+                  v-model="form.level_id"
+                  :options="levelOptions"
+                  @change="onLevelChange"
+                />
+              </BFormGroup>
+            </BCol>
+            <BCol md="4">
               <BFormGroup
                 label="Classe"
                 label-for="class-id"
@@ -583,6 +596,7 @@
                   id="class-id"
                   v-model="form.class_id"
                   :options="classOptions"
+                  :disabled="!form.level_id"
                 />
               </BFormGroup>
             </BCol>
@@ -762,6 +776,7 @@ const academicYearStore = useAcademicYearStore()
 const activeTab = ref(0)
 const isSubmitting = ref(false)
 const errors = ref({})
+const levels = ref([])
 const classes = ref([])
 const studentPhotoFile = ref(null)
 const photoPreview = ref('')
@@ -800,6 +815,8 @@ const form = ref({
   emergency_contact_phone: '',
   emergency_contact_relationship: '',
   enrollment_date: new Date().toISOString().split('T')[0],
+  school_id: '',
+  level_id: '',
   class_id: '',
   admission_score: '',
   status: 'active',
@@ -822,6 +839,14 @@ const genderOptions = [
   { value: 'male', text: 'Garçon' },
   { value: 'female', text: 'Fille' }
 ]
+
+const levelOptions = computed(() => [
+  { value: '', text: 'Sélectionner un niveau' },
+  ...levels.value.map(level => ({
+    value: level.id,
+    text: `${level.school?.name} - ${level.name}`
+  }))
+])
 
 const classOptions = computed(() => [
   { value: '', text: 'Sélectionner une classe' },
@@ -870,16 +895,50 @@ const getFieldState = (fieldName) => {
   return null
 }
 
-const loadClasses = async () => {
+const loadLevels = async () => {
+  try {
+    const { data } = await axios.get('/api/levels')
+    levels.value = data.data || data
+  } catch (error) {
+    console.error('Error loading levels:', error)
+    showToast('Erreur lors du chargement des niveaux', 'error')
+  }
+}
+
+const loadClasses = async (levelId = null) => {
   if (!academicYearStore.currentAcademicYear?.id) return
   
   try {
-    const { data } = await axios.get('/api/students/classes', {
-      params: { academic_year_id: academicYearStore.currentAcademicYear.id }
-    })
+    const params = { 
+      academic_year_id: academicYearStore.currentAcademicYear.id 
+    }
+    
+    if (levelId) {
+      params.level_id = levelId
+    }
+    
+    const { data } = await axios.get('/api/students/classes', { params })
     classes.value = data
   } catch (error) {
     console.error('Error loading classes:', error)
+    showToast('Erreur lors du chargement des classes', 'error')
+  }
+}
+
+const onLevelChange = () => {
+  // Reset class selection when level changes
+  form.value.class_id = ''
+  
+  // Set school_id based on selected level
+  if (form.value.level_id) {
+    const selectedLevel = levels.value.find(level => level.id == form.value.level_id)
+    if (selectedLevel) {
+      form.value.school_id = selectedLevel.school_id
+    }
+    loadClasses(form.value.level_id)
+  } else {
+    form.value.school_id = ''
+    classes.value = []
   }
 }
 
@@ -938,6 +997,8 @@ const resetForm = () => {
     emergency_contact_phone: '',
     emergency_contact_relationship: '',
     enrollment_date: new Date().toISOString().split('T')[0],
+    school_id: '',
+    level_id: '',
     class_id: '',
     admission_score: '',
     status: 'active',
@@ -970,6 +1031,15 @@ const loadStudent = () => {
     }
     if (props.student.enrollment_date) {
       form.value.enrollment_date = props.student.enrollment_date.split('T')[0]
+    }
+    // Set school_id and level_id from student or class relationship
+    if (props.student.school_id) {
+      form.value.school_id = props.student.school_id
+    }
+    if (props.student.level_id) {
+      form.value.level_id = props.student.level_id
+    } else if (props.student.class?.level_id) {
+      form.value.level_id = props.student.class.level_id
     }
     // Handle existing photo
     if (props.student.student_photo) {
@@ -1047,8 +1117,9 @@ const submitForm = async () => {
 }
 
 // Watchers
-watch(() => props.visible, (visible) => {
+watch(() => props.visible, async (visible) => {
   if (visible) {
+    await loadLevels()
     if (props.student) {
       loadStudent()
     } else {
@@ -1071,12 +1142,13 @@ onMounted(async () => {
   }
   
   if (props.visible) {
-    await loadClasses()
+    await loadLevels()
     if (props.student) {
       loadStudent()
     } else {
       resetForm()
     }
+    await loadClasses()
   }
 })
 </script>

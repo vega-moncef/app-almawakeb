@@ -12,6 +12,8 @@ class Student extends Model
 
     protected $fillable = [
         'academic_year_id',
+        'school_id',
+        'level_id',
         'class_id', 
         'student_visit_id',
         'admission_test_id',
@@ -85,6 +87,16 @@ class Student extends Model
     public function academicYear()
     {
         return $this->belongsTo(AcademicYear::class);
+    }
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
     }
 
     public function class()
@@ -198,6 +210,8 @@ class Student extends Model
 
         return self::create([
             'academic_year_id' => $visit->academic_year_id,
+            'school_id' => $visit->requestedSchool->id ?? null,
+            'level_id' => $visit->requestedLevel->id ?? null,
             'student_visit_id' => $visit->id,
             'student_code' => $studentCode,
             'first_name' => $visit->student_first_name,

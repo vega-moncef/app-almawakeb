@@ -95,6 +95,12 @@ export const MENU_ITEMS: MenuItemType[] = [
                 route: { name: 'academic.classes.list' },
                 parentKey: 'academic-management'
             },
+            {
+                key: 'academic-class-assignments',
+                label: 'Assignation des Classes',
+                route: { name: 'academic.class-assignments' },
+                parentKey: 'academic-management'
+            },
                         {
                 key: 'admissions-visits-create',
                 label: 'Matières',

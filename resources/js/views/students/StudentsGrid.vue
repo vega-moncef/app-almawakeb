@@ -128,7 +128,12 @@
                       </div>
                       <div class="d-block">
                         <a href="#!" class="text-dark fw-medium fs-16">{{ student.first_name }} {{ student.last_name }}</a>
-                        <p class="mb-0">{{ student.father_phone }}</p>
+                        <p class="mb-0">
+                          <span v-if="student.class?.level?.school" class="text-muted">
+                            {{ student.class.level.school.name }} - {{ student.class.level.name }} - {{ student.class.name }}
+                          </span>
+                          <span v-else class="text-muted">Non assigné à une classe</span>
+                        </p>
                         <p class="mb-0 text-primary"># {{ student.student_code }}</p>
                       </div>
                       <div class="ms-auto">
@@ -146,19 +151,34 @@
                       <i class="ri-user-line fs-18 text-primary"></i>{{ student.gender === 'male' ? 'Garçon' : 'Fille' }}
                     </p>
                     
-                    <p v-if="student.class" class="d-flex align-items-center gap-2 mt-2 mb-2">
-                      <i class="ri-school-line fs-18 text-primary"></i>{{ student.class.full_name }}
+                    <p  class="d-flex align-items-center gap-2 mt-2 mb-2">
+                      <i class="ri-school-line fs-18 text-primary"></i>Massar : {{ student.massar_code }}
                     </p>
                     
                     <p class="d-flex align-items-center gap-2 mt-2">
-                      <i class="ri-calendar-event-line fs-18 text-primary"></i>{{ formatDate(student.enrollment_date) }}
+                      <i class="ri-calendar-event-line fs-18 text-primary"></i>Naissance : {{ formatDate(student.birth_date) }}  <span>{{ student.birth_place }}</span>
+                    </p>
+                    
+                    <p class="d-flex align-items-center gap-2 mt-2 mb-2">
+                      <i class="ri-bus-line fs-18 text-primary"></i>Transport : 
+                      <span :class="student.transport_method && student.transport_method !== 'none' ? 'text-success fw-medium' : 'text-muted'">
+                        {{ student.transport_method && student.transport_method !== 'none' ? 'Oui' : 'Non' }}
+                      </span>
+                    </p>
+                    
+                    <p class="d-flex align-items-center gap-2 mt-2 mb-2">
+                      <i class="ri-restaurant-line fs-18 text-primary"></i>Restaurant : 
+                      <span :class="student.meal_plan && student.meal_plan !== 'none' ? 'text-success fw-medium' : 'text-muted'">
+                        {{ student.meal_plan && student.meal_plan !== 'none' ? 'Oui' : 'Non' }}
+                      </span>
                     </p>
                     
                     <h5 class="my-3">Contact Parent :</h5>
                     <div class="d-flex align-items-center gap-2">
                       <i class="ri-parent-line fs-18 text-muted"></i>
                       <span class="text-muted">Père :</span>
-                      <span>{{ student.father_first_name }} {{ student.father_last_name }}</span>
+                      <span>{{ student.father_first_name }} {{ student.father_last_name }}</span><br>
+                      <span>{{ student.father_phone }}</span>
                     </div>
                   </BCardBody>
                   
@@ -296,10 +316,10 @@ const studentStats = ref({
 })
 
 const widgetStats = ref({
-  totalEnrollments: 0, // Total enrollments for the academic year
+  totalEnrollments: 25,
   pendingApplications: 8,
-  totalClasses: 0, // Will be calculated from classes data
-  occupiedClasses: 0, // Will be calculated from student assignments
+  totalClasses: 12,
+  occupiedClasses: 10,
   growthPercentage: 15.4
 })
 
@@ -362,8 +382,8 @@ const loadStats = async () => {
       recent_enrollments: data.recent_enrollments || 0
     }
     
-    // Update widget stats based on actual data - use total for yearly view
-    widgetStats.value.totalEnrollments = data.total || 0
+    // Update widget stats based on actual data
+    widgetStats.value.totalEnrollments = data.recent_enrollments || 0
     
     // Calculate class statistics
     await loadClassStats()
@@ -469,9 +489,6 @@ const loadStudents = async () => {
       studentStats.value.suspended = statusCounts.suspended || 0
       studentStats.value.transferred = statusCounts.transferred || 0
     }
-    
-    // Update class occupation stats based on current students data
-    await loadClassStats()
   } catch (error) {
     console.error('Error loading students:', error)
     showToast('Erreur lors du chargement des élèves', 'error')

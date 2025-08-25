@@ -1124,6 +1124,15 @@ const academicRoutes = [
             authRequired: true
         },
         component: () => import('@/views/academic/ClassesList.vue')
+    },
+    {
+        path: '/academic/class-assignments',
+        name: 'academic.class-assignments',
+        meta: {
+            title: setTitle('Assignation des Classes'),
+            authRequired: true
+        },
+        component: () => import('@/views/academic/ClassAssignments.vue')
     }
 ];
 

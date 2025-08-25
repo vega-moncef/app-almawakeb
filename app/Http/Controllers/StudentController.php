@@ -51,7 +51,7 @@ class StudentController extends Controller
 
     public function show(Student $student): JsonResponse
     {
-        $student->load(['academicYear', 'class.level.school', 'studentVisit']);
+        $student->load(['academicYear', 'school', 'level', 'class.level.school', 'studentVisit']);
         return response()->json($student);
     }
 
@@ -72,7 +72,9 @@ class StudentController extends Controller
             'home_address' => 'required|string',
             'enrollment_date' => 'required|date',
             'academic_year_id' => 'nullable|exists:academic_years,id',
-            'class_id' => 'nullable|exists:class_rooms,id',
+            'school_id' => 'nullable|exists:schools,id',
+            'level_id' => 'nullable|exists:levels,id',
+            'class_id' => 'nullable|exists:classes,id',
             'massar_code' => 'nullable|string|unique:students,massar_code',
             'student_code' => 'nullable|string|unique:students,student_code',
             'repeat_count' => 'nullable|integer|min:0',
@@ -106,7 +108,7 @@ class StudentController extends Controller
         }
 
         $student = Student::create($data);
-        $student->load(['academicYear', 'class.level.school']);
+        $student->load(['academicYear', 'school', 'level', 'class.level.school']);
 
         return response()->json($student, 201);
     }
@@ -128,7 +130,9 @@ class StudentController extends Controller
             'home_address' => 'sometimes|required|string',
             'enrollment_date' => 'sometimes|required|date',
             'academic_year_id' => 'nullable|exists:academic_years,id',
-            'class_id' => 'nullable|exists:class_rooms,id',
+            'school_id' => 'nullable|exists:schools,id',
+            'level_id' => 'nullable|exists:levels,id',
+            'class_id' => 'nullable|exists:classes,id',
             'massar_code' => [
                 'nullable',
                 'string',
@@ -178,7 +182,7 @@ class StudentController extends Controller
         }
 
         $student->update($data);
-        $student->load(['academicYear', 'class.level.school']);
+        $student->load(['academicYear', 'school', 'level', 'class.level.school']);
 
         return response()->json($student);
     }
@@ -219,7 +223,7 @@ class StudentController extends Controller
             $student->update(['class_id' => $request->class_id]);
         }
 
-        $student->load(['academicYear', 'class.level.school', 'studentVisit']);
+        $student->load(['academicYear', 'school', 'level', 'class.level.school', 'studentVisit']);
 
         return response()->json($student, 201);
     }
@@ -251,6 +255,11 @@ class StudentController extends Controller
             $query->forYear($academicYearId);
         } else {
             $query->forCurrentYear();
+        }
+
+        // Filter by level if provided
+        if ($request->has('level_id') && $request->get('level_id') !== '') {
+            $query->where('level_id', $request->get('level_id'));
         }
 
         $classes = $query->orderBy('full_name')->get();

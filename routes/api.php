@@ -64,6 +64,14 @@ Route::post('students/create-from-visit', [StudentController::class, 'createFrom
 // Students - Route resource APRÈS les routes spécifiques
 Route::apiResource('students', StudentController::class);
 
+// Class Assignment routes
+Route::get('class-assignments/levels', [App\Http\Controllers\ClassAssignmentController::class, 'getLevelsWithStudents']);
+Route::get('class-assignments/level/{levelId}/students', [App\Http\Controllers\ClassAssignmentController::class, 'getStudentsByLevel']);
+Route::post('class-assignments/assign', [App\Http\Controllers\ClassAssignmentController::class, 'assignStudentsToClass']);
+Route::delete('class-assignments/student/{studentId}', [App\Http\Controllers\ClassAssignmentController::class, 'removeStudentFromClass']);
+Route::put('class-assignments/move', [App\Http\Controllers\ClassAssignmentController::class, 'moveStudentToClass']);
+Route::get('class-assignments/stats', [App\Http\Controllers\ClassAssignmentController::class, 'getAssignmentStats']);
+
 Route::get('schools', function() {
     return response()->json([
         'success' => true,
