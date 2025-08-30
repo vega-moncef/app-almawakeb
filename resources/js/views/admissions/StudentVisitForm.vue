@@ -8,7 +8,7 @@
             <h4 class="card-title">{{ isEditMode ? 'Modifier Visite Élève' : 'Fiche de Visite - Nouvel Élève' }}</h4>
           </div>
           <div class="card-body">
-            <form @submit.prevent="submitForm">
+            <form @submit.prevent="submitForm" novalidate>
               <!-- Student Information -->
               <div class="row mb-4">
                 <div class="col-12">
@@ -22,11 +22,10 @@
                     type="text" 
                     class="form-control" 
                     v-model="form.student_last_name"
-                    :class="{ 'is-invalid': errors.student_last_name }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('student_last_name') === false }"
                   >
                   <div v-if="errors.student_last_name" class="invalid-feedback">
-                    {{ errors.student_last_name[0] }}
+                    {{ Array.isArray(errors.student_last_name) ? errors.student_last_name[0] : errors.student_last_name }}
                   </div>
                 </div>
 
@@ -36,11 +35,10 @@
                     type="text" 
                     class="form-control" 
                     v-model="form.student_first_name"
-                    :class="{ 'is-invalid': errors.student_first_name }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('student_first_name') === false }"
                   >
                   <div v-if="errors.student_first_name" class="invalid-feedback">
-                    {{ errors.student_first_name[0] }}
+                    {{ Array.isArray(errors.student_first_name) ? errors.student_first_name[0] : errors.student_first_name }}
                   </div>
                 </div>
 
@@ -49,15 +47,14 @@
                   <select 
                     class="form-select" 
                     v-model="form.student_gender"
-                    :class="{ 'is-invalid': errors.student_gender }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('student_gender') === false }"
                   >
                     <option value="">Sélectionner</option>
                     <option value="FEMININ">FEMININ</option>
                     <option value="MASCULIN">MASCULIN</option>
                   </select>
                   <div v-if="errors.student_gender" class="invalid-feedback">
-                    {{ errors.student_gender[0] }}
+                    {{ Array.isArray(errors.student_gender) ? errors.student_gender[0] : errors.student_gender }}
                   </div>
                 </div>
 
@@ -67,11 +64,10 @@
                     type="date" 
                     class="form-control" 
                     v-model="form.birth_date"
-                    :class="{ 'is-invalid': errors.birth_date }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('birth_date') === false }"
                   >
                   <div v-if="errors.birth_date" class="invalid-feedback">
-                    {{ errors.birth_date[0] }}
+                    {{ Array.isArray(errors.birth_date) ? errors.birth_date[0] : errors.birth_date }}
                   </div>
                 </div>
 
@@ -141,11 +137,10 @@
                     type="text" 
                     class="form-control" 
                     v-model="form.father_last_name"
-                    :class="{ 'is-invalid': errors.father_last_name }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('father_last_name') === false }"
                   >
                   <div v-if="errors.father_last_name" class="invalid-feedback">
-                    {{ errors.father_last_name[0] }}
+                    {{ Array.isArray(errors.father_last_name) ? errors.father_last_name[0] : errors.father_last_name }}
                   </div>
                 </div>
 
@@ -155,11 +150,10 @@
                     type="text" 
                     class="form-control" 
                     v-model="form.father_first_name"
-                    :class="{ 'is-invalid': errors.father_first_name }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('father_first_name') === false }"
                   >
                   <div v-if="errors.father_first_name" class="invalid-feedback">
-                    {{ errors.father_first_name[0] }}
+                    {{ Array.isArray(errors.father_first_name) ? errors.father_first_name[0] : errors.father_first_name }}
                   </div>
                 </div>
 
@@ -169,12 +163,11 @@
                     type="tel" 
                     class="form-control" 
                     v-model="form.father_phone"
-                    :class="{ 'is-invalid': errors.father_phone }"
+                    :class="{ 'is-invalid': getFieldState('father_phone') === false }"
                     placeholder="0661234567"
-                    required
                   >
                   <div v-if="errors.father_phone" class="invalid-feedback">
-                    {{ errors.father_phone[0] }}
+                    {{ Array.isArray(errors.father_phone) ? errors.father_phone[0] : errors.father_phone }}
                   </div>
                 </div>
 
@@ -184,11 +177,11 @@
                     type="email" 
                     class="form-control" 
                     v-model="form.father_email"
-                    :class="{ 'is-invalid': errors.father_email }"
+                    :class="{ 'is-invalid': getFieldState('father_email') === false }"
                     placeholder="father@example.com"
                   >
                   <div v-if="errors.father_email" class="invalid-feedback">
-                    {{ errors.father_email[0] }}
+                    {{ Array.isArray(errors.father_email) ? errors.father_email[0] : errors.father_email }}
                   </div>
                 </div>
 
@@ -216,11 +209,10 @@
                     type="text" 
                     class="form-control" 
                     v-model="form.mother_last_name"
-                    :class="{ 'is-invalid': errors.mother_last_name }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('mother_last_name') === false }"
                   >
                   <div v-if="errors.mother_last_name" class="invalid-feedback">
-                    {{ errors.mother_last_name[0] }}
+                    {{ Array.isArray(errors.mother_last_name) ? errors.mother_last_name[0] : errors.mother_last_name }}
                   </div>
                 </div>
 
@@ -230,11 +222,10 @@
                     type="text" 
                     class="form-control" 
                     v-model="form.mother_first_name"
-                    :class="{ 'is-invalid': errors.mother_first_name }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('mother_first_name') === false }"
                   >
                   <div v-if="errors.mother_first_name" class="invalid-feedback">
-                    {{ errors.mother_first_name[0] }}
+                    {{ Array.isArray(errors.mother_first_name) ? errors.mother_first_name[0] : errors.mother_first_name }}
                   </div>
                 </div>
 
@@ -244,12 +235,11 @@
                     type="tel" 
                     class="form-control" 
                     v-model="form.mother_phone"
-                    :class="{ 'is-invalid': errors.mother_phone }"
+                    :class="{ 'is-invalid': getFieldState('mother_phone') === false }"
                     placeholder="0610234567"
-                    required
                   >
                   <div v-if="errors.mother_phone" class="invalid-feedback">
-                    {{ errors.mother_phone[0] }}
+                    {{ Array.isArray(errors.mother_phone) ? errors.mother_phone[0] : errors.mother_phone }}
                   </div>
                 </div>
 
@@ -259,11 +249,11 @@
                     type="email" 
                     class="form-control" 
                     v-model="form.mother_email"
-                    :class="{ 'is-invalid': errors.mother_email }"
+                    :class="{ 'is-invalid': getFieldState('mother_email') === false }"
                     placeholder="mother@example.com"
                   >
                   <div v-if="errors.mother_email" class="invalid-feedback">
-                    {{ errors.mother_email[0] }}
+                    {{ Array.isArray(errors.mother_email) ? errors.mother_email[0] : errors.mother_email }}
                   </div>
                 </div>
 
@@ -291,8 +281,7 @@
                     class="form-select" 
                     v-model="form.requested_school_id"
                     @change="onSchoolChange"
-                    :class="{ 'is-invalid': errors.requested_school_id }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('requested_school_id') === false }"
                   >
                     <option value="">Sélectionner une école</option>
                     <option 
@@ -305,7 +294,7 @@
                   </select>
                   <small class="text-muted">Écoles disponibles: {{ schools.length }}</small>
                   <div v-if="errors.requested_school_id" class="invalid-feedback">
-                    {{ errors.requested_school_id[0] }}
+                    {{ Array.isArray(errors.requested_school_id) ? errors.requested_school_id[0] : errors.requested_school_id }}
                   </div>
                 </div>
 
@@ -314,7 +303,7 @@
                   <select 
                     class="form-select" 
                     v-model="form.requested_level_id"
-                    :class="{ 'is-invalid': errors.requested_level_id }"
+                    :class="{ 'is-invalid': getFieldState('requested_level_id') === false }"
                     :disabled="!form.requested_school_id"
                   >
                     <option value="">Sélectionner un niveau</option>
@@ -327,7 +316,7 @@
                     </option>
                   </select>
                   <div v-if="errors.requested_level_id" class="invalid-feedback">
-                    {{ errors.requested_level_id[0] }}
+                    {{ Array.isArray(errors.requested_level_id) ? errors.requested_level_id[0] : errors.requested_level_id }}
                   </div>
                 </div>
 
@@ -355,11 +344,10 @@
                     type="datetime-local" 
                     class="form-control" 
                     v-model="form.visit_date"
-                    :class="{ 'is-invalid': errors.visit_date }"
-                    required
+                    :class="{ 'is-invalid': getFieldState('visit_date') === false }"
                   >
                   <div v-if="errors.visit_date" class="invalid-feedback">
-                    {{ errors.visit_date[0] }}
+                    {{ Array.isArray(errors.visit_date) ? errors.visit_date[0] : errors.visit_date }}
                   </div>
                 </div>
 
@@ -413,6 +401,8 @@ import VerticalLayout from "@/layouts/VerticalLayout.vue";
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/dist/sweetalert2.css'
 
 // Router and route
 const route = useRoute()
@@ -473,6 +463,12 @@ const filteredLevels = computed(() => {
   return levels.value.filter(level => level.school_id == form.requested_school_id)
 })
 
+// Methods for error handling
+const getFieldState = (fieldName) => {
+  if (errors.value[fieldName]) return false
+  return null
+}
+
 onMounted(() => {
   loadFormData()
   
@@ -508,7 +504,15 @@ const loadFormData = async () => {
   } catch (error) {
     console.error('❌ Error loading form data:', error)
     console.error('❌ Error details:', error.response?.data)
-    alert('Erreur lors du chargement des données: ' + (error.response?.data?.message || error.message))
+    const errorMsg = error.response?.data?.message || error.message || 'Une erreur inattendue s\'est produite'
+    Swal.fire({
+      title: 'Erreur de chargement',
+      text: 'Erreur lors du chargement des données: ' + errorMsg,
+      icon: 'error',
+      confirmButtonText: 'Compris',
+      confirmButtonClass: 'btn btn-primary w-xs mt-2',
+      showCloseButton: false
+    })
   }
 }
 
@@ -591,7 +595,15 @@ const loadVisitData = async () => {
     }
   } catch (error) {
     console.error('❌ Error loading visit data:', error)
-    alert('Erreur lors du chargement de la visite: ' + (error.response?.data?.message || error.message))
+    const errorMsg = error.response?.data?.message || error.message || 'Une erreur inattendue s\'est produite'
+    Swal.fire({
+      title: 'Erreur de chargement',
+      text: 'Erreur lors du chargement de la visite: ' + errorMsg,
+      icon: 'error',
+      confirmButtonText: 'Compris',
+      confirmButtonClass: 'btn btn-primary w-xs mt-2',
+      showCloseButton: false
+    })
     // Redirect back to list if visit not found
     router.push({ name: 'admissions.visits.list' })
   }
@@ -623,14 +635,114 @@ const onSchoolChange = async (preserveLevel = false) => {
       }
     } catch (error) {
       console.error('Error loading levels:', error)
-      alert('Erreur lors du chargement des niveaux')
+      Swal.fire({
+        title: 'Erreur de chargement',
+        text: 'Erreur lors du chargement des niveaux. Veuillez réessayer.',
+        icon: 'error',
+        confirmButtonText: 'Compris',
+        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+        showCloseButton: false
+      })
     }
   }
 }
 
+// Client-side validation function
+const validateForm = () => {
+  const validationErrors = {}
+  
+  // Student information validation
+  if (!form.student_first_name?.trim()) {
+    validationErrors.student_first_name = 'Le prénom de l\'élève est obligatoire.'
+  }
+  if (!form.student_last_name?.trim()) {
+    validationErrors.student_last_name = 'Le nom de l\'élève est obligatoire.'
+  }
+  if (!form.student_gender) {
+    validationErrors.student_gender = 'Le sexe est obligatoire.'
+  }
+  if (!form.birth_date) {
+    validationErrors.birth_date = 'La date de naissance est obligatoire.'
+  }
+  
+  // Father information validation
+  if (!form.father_first_name?.trim()) {
+    validationErrors.father_first_name = 'Le prénom du père est obligatoire.'
+  }
+  if (!form.father_last_name?.trim()) {
+    validationErrors.father_last_name = 'Le nom du père est obligatoire.'
+  }
+  if (!form.father_phone?.trim()) {
+    validationErrors.father_phone = 'Le numéro de téléphone du père est obligatoire.'
+  }
+  
+  // Mother information validation
+  if (!form.mother_first_name?.trim()) {
+    validationErrors.mother_first_name = 'Le prénom de la mère est obligatoire.'
+  }
+  if (!form.mother_last_name?.trim()) {
+    validationErrors.mother_last_name = 'Le nom de la mère est obligatoire.'
+  }
+  if (!form.mother_phone?.trim()) {
+    validationErrors.mother_phone = 'Le numéro de téléphone de la mère est obligatoire.'
+  }
+  
+  // School request validation
+  if (!form.requested_school_id) {
+    validationErrors.requested_school_id = 'L\'école demandée est obligatoire.'
+  }
+  
+  // Visit information validation
+  if (!form.visit_date) {
+    validationErrors.visit_date = 'La date de visite est obligatoire.'
+  }
+  
+  // Email validation if provided
+  if (form.father_email && !isValidEmail(form.father_email)) {
+    validationErrors.father_email = 'L\'adresse e-mail du père n\'est pas valide.'
+  }
+  if (form.mother_email && !isValidEmail(form.mother_email)) {
+    validationErrors.mother_email = 'L\'adresse e-mail de la mère n\'est pas valide.'
+  }
+  
+  return validationErrors
+}
+
+// Email validation helper
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 const submitForm = async () => {
-  loading.value = true
+  if (loading.value) return
+  
+  // Clear previous errors
   errors.value = {}
+  
+  // Run client-side validation
+  const validationErrors = validateForm()
+  if (Object.keys(validationErrors).length > 0) {
+    errors.value = validationErrors
+    
+    const errorCount = Object.keys(validationErrors).length
+    const errorMessage = errorCount === 1 
+      ? 'Veuillez corriger l\'erreur dans le formulaire.'
+      : `Veuillez corriger les ${errorCount} erreurs dans le formulaire.`
+    
+    Swal.fire({
+      title: 'Erreurs de validation',
+      text: errorMessage,
+      icon: 'warning',
+      confirmButtonText: 'Compris',
+      confirmButtonClass: 'btn btn-primary w-xs mt-2',
+      showCloseButton: false
+    })
+    
+    return
+  }
+  
+  loading.value = true
 
   try {
     let response
@@ -647,26 +759,80 @@ const submitForm = async () => {
       const message = isEditMode.value 
         ? 'Visite mise à jour avec succès!' 
         : 'Fiche de visite enregistrée avec succès!'
-      alert(message)
       
-      if (isEditMode.value) {
-        // Redirect to list after successful update
-        router.push({ name: 'admissions.visits.list' })
-      } else {
-        resetForm()
-      }
+      Swal.fire({
+        title: 'Succès !',
+        text: message,
+        icon: 'success',
+        confirmButtonText: 'Parfait',
+        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+        showCloseButton: false
+      }).then(() => {
+        if (isEditMode.value) {
+          // Redirect to list after successful update
+          router.push({ name: 'admissions.visits.list' })
+        } else {
+          resetForm()
+        }
+      })
     } else {
-      alert('Erreur lors de l\'enregistrement')
+      Swal.fire({
+        title: 'Erreur',
+        text: 'Erreur lors de l\'enregistrement',
+        icon: 'error',
+        confirmButtonText: 'Compris',
+        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+        showCloseButton: false
+      })
     }
     
   } catch (error) {
+    console.error('Submission error:', error)
+    
     if (error.response?.status === 422) {
+      // Handle validation errors
       errors.value = error.response.data.errors || {}
-      alert('Veuillez corriger les erreurs dans le formulaire')
+      
+      // Show a French error message
+      const errorCount = Object.keys(errors.value).length
+      let errorMessage
+      if (errorCount === 1) {
+        errorMessage = 'Veuillez corriger l\'erreur dans le formulaire.'
+      } else if (errorCount > 1) {
+        errorMessage = `Veuillez corriger les ${errorCount} erreurs dans le formulaire.`
+      } else {
+        errorMessage = 'Veuillez vérifier les informations saisies.'
+      }
+      
+      Swal.fire({
+        title: 'Erreurs de validation',
+        text: errorMessage,
+        icon: 'warning',
+        confirmButtonText: 'Compris',
+        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+        showCloseButton: false
+      })
     } else {
+      // Handle other errors with French messages
       const action = isEditMode.value ? 'mise à jour' : 'enregistrement'
-      alert(`Erreur lors de la ${action}: ` + (error.response?.data?.message || error.message))
-      console.error('Submission error:', error)
+      let errorMessage = `Erreur lors de la ${action}`
+      
+      if (error.response?.data?.message) {
+        errorMessage += ': ' + error.response.data.message
+      } else if (error.message) {
+        errorMessage += ': ' + error.message
+      } else {
+        errorMessage += '. Veuillez réessayer.'
+      }
+      
+      Swal.fire({
+        title: 'Erreur',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Compris',
+        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+        showCloseButton: false
+      })
     }
   } finally {
     loading.value = false

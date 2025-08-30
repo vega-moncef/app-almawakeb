@@ -42,6 +42,25 @@ class ClassRoom extends Model
         return $this->hasMany(Student::class, 'class_id');
     }
 
+    public function timetables()
+    {
+        return $this->hasMany(Timetable::class, 'class_id');
+    }
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'class_subject', 'class_id', 'subject_id')
+                    ->withPivot('hours_per_week', 'is_active')
+                    ->withTimestamps();
+    }
+
+    public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class, 'timetables', 'class_id', 'teacher_id')
+                    ->withPivot('subject_id', 'time_slot_id', 'day_of_week')
+                    ->distinct();
+    }
+
     // Helper methods
     public function hasCapacity()
     {

@@ -35,6 +35,24 @@ class Subject extends Model
         return $this->hasMany(StudentTestResult::class);
     }
 
+    public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class, 'teacher_subjects')
+                    ->withTimestamps();
+    }
+
+    public function classes()
+    {
+        return $this->belongsToMany(ClassRoom::class, 'class_subject', 'subject_id', 'class_id')
+                    ->withPivot('hours_per_week', 'is_active')
+                    ->withTimestamps();
+    }
+
+    public function timetables()
+    {
+        return $this->hasMany(Timetable::class);
+    }
+
     // Scopes
     public function scopeActive($query)
     {

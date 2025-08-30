@@ -80,7 +80,9 @@ class StudentVisitController extends Controller
             ];
 
             // Pagination
-            $perPage = $request->get('per_page', 15);
+            $perPage = $request->get('per_page', 10);
+            // Limit per_page to reasonable values (between 1 and 100)
+            $perPage = max(1, min(100, intval($perPage)));
             $visits = $query->paginate($perPage);
 
             return response()->json([

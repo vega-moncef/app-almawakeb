@@ -12,7 +12,7 @@
             title: 'Total Tests',
             statistic: stats.total_tests || 0,
             prefix: '',
-            icon: 'fas fa-clipboard-list'
+            icon: 'solar:clipboard-text-broken'
           }"
         />
       </div>
@@ -22,7 +22,7 @@
             title: 'Tests Oraux',
             statistic: stats.oral_tests || 0,
             prefix: '',
-            icon: 'fas fa-microphone'
+            icon: 'solar:microphone-3-broken'
           }"
         />
       </div>
@@ -32,7 +32,7 @@
             title: 'Tests Écrits',
             statistic: stats.written_tests || 0,
             prefix: '',
-            icon: 'fas fa-pen'
+            icon: 'solar:pen-new-square-broken'
           }"
         />
       </div>
@@ -42,7 +42,7 @@
             title: 'Tests Actifs',
             statistic: stats.active_tests || 0,
             prefix: '',
-            icon: 'fas fa-check-circle'
+            icon: 'solar:check-circle-broken'
           }"
         />
       </div>
@@ -54,14 +54,17 @@
         <div class="card">
           <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
-              <h4 class="card-title">Liste des Tests</h4>
+              <div>
+                <h4 class="card-title mb-0">Liste des Tests</h4>
+                <small class="text-muted">{{ pagination.total }} test(s) au total • {{ pagination.per_page }} par page</small>
+              </div>
               <div class="d-flex gap-2">
                 <button 
                   type="button" 
                   class="btn btn-primary"
                   @click="createTest"
                 >
-                  <i class="fas fa-plus"></i> Nouveau Test
+                  <Icon icon="solar:add-circle-broken" class="me-2" />Nouveau Test
                 </button>
               </div>
             </div>
@@ -86,7 +89,7 @@
                 <select 
                   class="form-select" 
                   v-model="filters.type"
-                  @change="loadTests"
+                  @change="onFilterChange"
                 >
                   <option value="">Tous les types</option>
                   <option value="ORAL">Oral</option>
@@ -99,7 +102,7 @@
                 <select 
                   class="form-select" 
                   v-model="filters.level_id"
-                  @change="loadTests"
+                  @change="onFilterChange"
                 >
                   <option value="">Tous les niveaux</option>
                   <option 
@@ -117,7 +120,7 @@
                 <select 
                   class="form-select" 
                   v-model="filters.status"
-                  @change="loadTests"
+                  @change="onFilterChange"
                 >
                   <option value="">Tous les statuts</option>
                   <option value="active">Actif</option>
@@ -152,7 +155,7 @@
                   </tr>
                   <tr v-else-if="tests.length === 0">
                     <td colspan="8" class="text-center py-4 text-muted">
-                      <i class="fas fa-clipboard-list fa-2x mb-3 d-block"></i>
+                      <Icon icon="solar:clipboard-text-broken" class="fs-48 mb-2 d-block" />
                       Aucun test trouvé
                     </td>
                   </tr>
@@ -260,46 +263,22 @@
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-3" v-if="pagination.total > 0">
               <div class="text-muted">
-                Affichage {{ pagination.from }} à {{ pagination.to }} 
-                sur {{ pagination.total }} tests
+                Affichage {{ (pagination.current_page - 1) * pagination.per_page + 1 }} à 
+                {{ Math.min(pagination.current_page * pagination.per_page, pagination.total) }} 
+                de {{ pagination.total }} résultats
               </div>
-              <nav>
-                <ul class="pagination pagination-sm mb-0">
-                  <li class="page-item" :class="{ disabled: !pagination.prev_page_url }">
-                    <button 
-                      class="page-link" 
-                      @click="loadPage(pagination.current_page - 1)"
-                      :disabled="!pagination.prev_page_url"
-                    >
-                      Précédent
-                    </button>
-                  </li>
-                  
-                  <li 
-                    v-for="page in visiblePages" 
-                    :key="page"
-                    class="page-item" 
-                    :class="{ active: page === pagination.current_page }"
-                  >
-                    <button 
-                      class="page-link" 
-                      @click="loadPage(page)"
-                    >
-                      {{ page }}
-                    </button>
-                  </li>
-                  
-                  <li class="page-item" :class="{ disabled: !pagination.next_page_url }">
-                    <button 
-                      class="page-link" 
-                      @click="loadPage(pagination.current_page + 1)"
-                      :disabled="!pagination.next_page_url"
-                    >
-                      Suivant
-                    </button>
-                  </li>
-                </ul>
-              </nav>
+              <b-pagination
+                v-model="pagination.current_page"
+                :total-rows="pagination.total"
+                :per-page="pagination.per_page"
+                prev-text="Précédent"
+                next-text="Suivant"
+                first-text="Premier"
+                last-text="Dernier"
+                class="mb-0"
+                limit="5"
+                @update:model-value="onPageChange"
+              />
             </div>
           </div>
         </div>
@@ -333,7 +312,11 @@ const loading = ref(false);
 const tests = ref([]);
 const levels = ref([]);
 const stats = ref({});
-const pagination = ref({});
+const pagination = reactive({
+  current_page: 1,
+  per_page: 10,
+  total: 0
+});
 
 const filters = reactive({
   search: '',
@@ -341,25 +324,10 @@ const filters = reactive({
   level_id: '',
   status: '',
   page: 1,
-  per_page: 15
+  per_page: 10
 });
 
 // Computed properties
-const visiblePages = computed(() => {
-  const current = pagination.value.current_page || 1;
-  const last = pagination.value.last_page || 1;
-  const pages = [];
-  
-  const start = Math.max(1, current - 2);
-  const end = Math.min(last, current + 2);
-  
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-  
-  return pages;
-});
-
 const sortedLevels = computed(() => {
   // The API already filters by current academic year and sorts properly
   return levels.value;
@@ -370,6 +338,7 @@ let searchTimeout;
 const debouncedSearch = () => {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
+    pagination.current_page = 1;
     loadTests();
   }, 500);
 };
@@ -397,8 +366,8 @@ const loadTests = async () => {
       search: filters.search,
       type: filters.type,
       level_id: filters.level_id,
-      page: filters.page,
-      per_page: filters.per_page
+      page: pagination.current_page,
+      per_page: pagination.per_page
     });
 
     // Add status filter logic
@@ -408,20 +377,19 @@ const loadTests = async () => {
       params.is_active = false;
     }
 
+    console.log('Loading tests with params:', params); // Debug log
+
     const response = await axios.get('/api/tests', { params });
+    
+    console.log('API Response:', response.data); // Debug log
     
     if (response.data.success) {
       tests.value = response.data.data.data || [];
-      pagination.value = {
-        current_page: response.data.data.current_page,
-        last_page: response.data.data.last_page,
-        per_page: response.data.data.per_page,
-        total: response.data.data.total,
-        from: response.data.data.from,
-        to: response.data.data.to,
-        prev_page_url: response.data.data.prev_page_url,
-        next_page_url: response.data.data.next_page_url
-      };
+      pagination.total = response.data.data.total;
+      // Don't overwrite current_page if we just set it
+      // pagination.current_page = response.data.data.current_page;
+      
+      console.log('Updated tests:', tests.value.length, 'Current page:', pagination.current_page); // Debug log
     }
   } catch (error) {
     console.error('Error loading tests:', error);
@@ -457,8 +425,16 @@ const loadStats = async () => {
   }
 };
 
-const loadPage = (page) => {
-  filters.page = page;
+// Page change handler
+const onPageChange = (page) => {
+  console.log('Page change requested:', page); // Debug log
+  pagination.current_page = page;
+  loadTests();
+};
+
+// Filter change handler - resets to first page when filter changes
+const onFilterChange = () => {
+  pagination.current_page = 1;
   loadTests();
 };
 

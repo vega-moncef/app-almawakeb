@@ -1166,4 +1166,76 @@ const studentsRoutes = [
     }
 ];
 
-export const allRoutes = [...authRoutes, ...errorRoutes, ...dashboardRoutes,...propertyRoutes,...agentsRoutes,...customersRoutes,...appsRoutes, ...pagesRoutes, ...uiRoutes, ...advancedUIRoutes, ...chartsRoutes, ...formRoutes, ...tablesRoutes, ...iconsRoutes, ...mapsRoutes, ...admissionsRoutes, ...academicRoutes, ...studentsRoutes, ...layoutRoutes];
+const teachersRoutes = [
+    {
+        path: '/teachers',
+        name: 'teachers.list',
+        meta: {
+            title: setTitle('Gestion des Enseignants'),
+            authRequired: true
+        },
+        component: () => import('@/views/teachers/TeachersList.vue')
+    },
+    {
+        path: '/teachers/schedule',
+        name: 'teachers.schedule',
+        meta: {
+            title: setTitle('Planning Enseignant'),
+            authRequired: true
+        },
+        component: () => import('@/views/timetables/TeacherSchedule.vue')
+    }
+];
+
+const timetablesRoutes = [
+    {
+        path: '/timetables',
+        name: 'timetables.list',
+        meta: {
+            title: setTitle('Gestion des Emplois du Temps'),
+            authRequired: true
+        },
+        component: () => import('@/views/timetables/TimetablesList.vue')
+    },
+    {
+        path: '/timetables/class-planning',
+        name: 'timetables.class-planning',
+        meta: {
+            title: setTitle('Planning Classe'),
+            authRequired: true
+        },
+        component: () => import('@/views/timetables/ClassPlanning.vue')
+    },
+    {
+        path: '/timetables/teacher-planning',
+        name: 'timetables.teacher-planning',
+        meta: {
+            title: setTitle('Planning Enseignants'),
+            authRequired: true
+        },
+        component: () => import('@/views/timetables/TeacherPlanning.vue')
+    },
+    {
+        path: '/timetables/time-slots',
+        name: 'timetables.time-slots',
+        meta: {
+            title: setTitle('Gestion des Créneaux Horaires'),
+            authRequired: true
+        },
+        component: () => import('@/views/timetables/TimeSlotManagement.vue')
+    }
+];
+
+const classSubjectsRoutes = [
+    {
+        path: '/class-subjects',
+        name: 'class-subjects.list',
+        meta: {
+            title: setTitle('Matières par Classe'),
+            authRequired: true
+        },
+        component: () => import('@/views/class-subjects/ClassSubjectsList.vue')
+    }
+];
+
+export const allRoutes = [...authRoutes, ...errorRoutes, ...dashboardRoutes,...propertyRoutes,...agentsRoutes,...customersRoutes,...appsRoutes, ...pagesRoutes, ...uiRoutes, ...advancedUIRoutes, ...chartsRoutes, ...formRoutes, ...tablesRoutes, ...iconsRoutes, ...mapsRoutes, ...admissionsRoutes, ...academicRoutes, ...studentsRoutes, ...teachersRoutes, ...timetablesRoutes, ...classSubjectsRoutes, ...layoutRoutes];

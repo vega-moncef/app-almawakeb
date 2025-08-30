@@ -157,7 +157,63 @@ export const MENU_ITEMS: MenuItemType[] = [
         ],
     },
 
+    {
+        key: 'teachers',
+        icon: 'ri-user-3-line',
+        label: 'Enseignants',
+        children: [
+            {
+                key: 'teachers-management',
+                label: 'Gestion des Enseignants',
+                route: { name: 'teachers.list' },
+                parentKey: 'teachers'
+            },
+            {
+                key: 'teachers-schedules',
+                label: 'Planning Enseignant',
+                route: { name: 'teachers.schedule' },
+                parentKey: 'teachers'
+            }
+        ]
+    },
 
+    {
+        key: 'timetables',
+        icon: 'ri-calendar-2-line',
+        label: 'Emplois du Temps',
+        children: [
+            {
+                key: 'timetables-management',
+                label: 'Gestion des Plannings',
+                route: { name: 'timetables.list' },
+                parentKey: 'timetables'
+            },
+            {
+                key: 'class-planning',
+                label: 'Planning Classe',
+                route: { name: 'timetables.class-planning' },
+                parentKey: 'timetables'
+            },
+            {
+                key: 'teacher-planning',
+                label: 'Planning Enseignants',
+                route: { name: 'timetables.teacher-planning' },
+                parentKey: 'timetables'
+            },
+            {
+                key: 'time-slots',
+                label: 'Créneaux Horaires',
+                route: { name: 'timetables.time-slots' },
+                parentKey: 'timetables'
+            },
+            {
+                key: 'class-subjects',
+                label: 'Matières par Classe',
+                route: { name: 'class-subjects.list' },
+                parentKey: 'timetables'
+            }
+        ]
+    },
 
     {
         key: 'dashboards',

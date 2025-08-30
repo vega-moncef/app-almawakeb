@@ -16,7 +16,7 @@
           <b-card-body>
             <b-row class="g-3">
               <b-col md="3">
-                <b-form-select v-model="filters.status" @change="loadVisits">
+                <b-form-select v-model="filters.status" @change="onFilterChange">
                   <option value="">Tous les statuts</option>
                   <option value="pending">En attente</option>
                   <option value="test_scheduled">Test programmé</option>
@@ -26,7 +26,7 @@
                 </b-form-select>
               </b-col>
               <b-col md="3">
-                <b-form-select v-model="filters.school_id" @change="loadVisits">
+                <b-form-select v-model="filters.school_id" @change="onFilterChange">
                   <option value="">Toutes les écoles</option>
                   <option v-for="school in schools" :key="school.id" :value="school.id">
                     {{ school.name }}
@@ -48,7 +48,7 @@
                 </b-input-group>
               </b-col>
               <b-col md="2">
-                <b-button variant="primary" @click="loadVisits" :disabled="loading">
+                <b-button variant="primary" @click="refreshData" :disabled="loading">
                   <Icon icon="solar:refresh-broken" class="me-1" />
                   Actualiser
                 </b-button>
@@ -66,7 +66,7 @@
           <b-card-header class="d-flex justify-content-between align-items-center border-bottom">
             <div>
               <b-card-title class="mb-0">Liste des Visites Étudiants</b-card-title>
-              <small class="text-muted">{{ totalVisits }} visite(s) au total</small>
+              <small class="text-muted">{{ totalVisits }} visite(s) au total • {{ pagination.per_page }} par page</small>
             </div>
             <b-dropdown variant="link" toggle-class="p-0 m-0" menu-class="dropdown-menu-end" no-caret>
               <template v-slot:button-content>
@@ -225,8 +225,11 @@
                 :per-page="pagination.per_page"
                 prev-text="Précédent"
                 next-text="Suivant"
+                first-text="Premier"
+                last-text="Dernier"
                 class="mb-0"
-                @change="loadVisits"
+                limit="5"
+                @update:model-value="onPageChange"
               />
             </div>
           </b-card-footer>
@@ -275,7 +278,7 @@ const filters = reactive({
 // Pagination
 const pagination = reactive({
   current_page: 1,
-  per_page: 15,
+  per_page: 10,
   total: 0
 });
 
@@ -359,19 +362,26 @@ const loadVisits = async () => {
     apiParams = addAcademicYearFilter(apiParams);
     
     const params = new URLSearchParams(apiParams);
+    
+    console.log('Loading visits with params:', apiParams); // Debug log
 
     const response = await axios.get(`/api/student-visits?${params.toString()}`);
+    
+    console.log('API Response:', response.data); // Debug log
     
     if (response.data.success) {
       visits.value = response.data.data.data;
       pagination.total = response.data.data.total;
-      pagination.current_page = response.data.data.current_page;
+      // Don't overwrite current_page if we just set it
+      // pagination.current_page = response.data.data.current_page;
       totalVisits.value = response.data.data.total;
       
       // Update status counts from backend response
       if (response.data.status_counts) {
         statusCounts.value = response.data.status_counts;
       }
+      
+      console.log('Updated visits:', visits.value.length, 'Current page:', pagination.current_page); // Debug log
     }
   } catch (error) {
     console.error('Error loading visits:', error);
@@ -383,13 +393,30 @@ const loadVisits = async () => {
 
 // Note: Status counts are now fetched from backend
 
+// Page change handler
+const onPageChange = (page) => {
+  console.log('Page change requested:', page); // Debug log
+  pagination.current_page = page;
+  // loadVisits will be called by the watcher
+};
+
+// Filter change handler - resets to first page when filter changes
+const onFilterChange = () => {
+  isLoadingFromPageChange = true;
+  pagination.current_page = 1;
+  loadVisits(); // We need to call loadVisits directly for filter changes
+  setTimeout(() => { isLoadingFromPageChange = false; }, 100);
+};
+
 // Debounced search
 let searchTimeout;
 const debounceSearch = () => {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
+    isLoadingFromPageChange = true;
     pagination.current_page = 1;
-    loadVisits();
+    loadVisits(); // Search needs to call loadVisits directly
+    setTimeout(() => { isLoadingFromPageChange = false; }, 100);
   }, 300);
 };
 
@@ -406,6 +433,18 @@ const toggleSelectAll = () => {
 watch(selectedVisits, (newVal) => {
   selectAll.value = newVal.length === visits.value.length && visits.value.length > 0;
 }, { deep: true });
+
+// Flag to prevent duplicate API calls from watcher
+let isLoadingFromPageChange = false;
+
+// Watch pagination current_page changes (only for direct page navigation, not filter changes)
+watch(() => pagination.current_page, (newPage, oldPage) => {
+  console.log('Pagination page changed from', oldPage, 'to', newPage);
+  // Only load if this is a pure page change (not triggered by filters)
+  if (newPage !== oldPage && newPage > 0 && !isLoadingFromPageChange) {
+    loadVisits();
+  }
+});
 
 // Status badge classes
 const getStatusBadgeClass = (status) => {
@@ -518,6 +557,9 @@ const exportVisits = () => {
 };
 
 const refreshData = () => {
-  loadVisits();
+  isLoadingFromPageChange = true;
+  pagination.current_page = 1;
+  loadVisits(); // We need to call loadVisits directly for refresh
+  setTimeout(() => { isLoadingFromPageChange = false; }, 100);
 };
 </script>

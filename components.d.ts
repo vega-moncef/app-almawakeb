@@ -12,6 +12,7 @@ declare module 'vue' {
     BAlert: typeof import('bootstrap-vue-next/components/BAlert')['BAlert']
     BBadge: typeof import('bootstrap-vue-next/components/BBadge')['BBadge']
     BButton: typeof import('bootstrap-vue-next/components/BButton')['BButton']
+    BButtonGroup: typeof import('bootstrap-vue-next/components/BButton')['BButtonGroup']
     BCard: typeof import('bootstrap-vue-next/components/BCard')['BCard']
     BCardBody: typeof import('bootstrap-vue-next/components/BCard')['BCardBody']
     BCardFooter: typeof import('bootstrap-vue-next/components/BCard')['BCardFooter']
@@ -44,6 +45,9 @@ declare module 'vue' {
     BModal: typeof import('bootstrap-vue-next/components/BModal')['BModal']
     BOffcanvas: typeof import('bootstrap-vue-next/components/BOffcanvas')['BOffcanvas']
     BPagination: typeof import('bootstrap-vue-next/components/BPagination')['BPagination']
+    BPlaceholder: typeof import('bootstrap-vue-next/components/BPlaceholder')['BPlaceholder']
+    BPlaceholderButton: typeof import('bootstrap-vue-next/components/BPlaceholder')['BPlaceholderButton']
+    BPopover: typeof import('bootstrap-vue-next/components/BPopover')['BPopover']
     BProgress: typeof import('bootstrap-vue-next/components/BProgress')['BProgress']
     BProgressBar: typeof import('bootstrap-vue-next/components/BProgress')['BProgressBar']
     BRow: typeof import('bootstrap-vue-next/components/BContainer')['BRow']
@@ -57,11 +61,14 @@ declare module 'vue' {
     BTfoot: typeof import('bootstrap-vue-next/components/BTable')['BTfoot']
     BTh: typeof import('bootstrap-vue-next/components/BTable')['BTh']
     BThead: typeof import('bootstrap-vue-next/components/BTable')['BThead']
+    BToast: typeof import('bootstrap-vue-next/components/BToast')['BToast']
+    BTooltip: typeof import('bootstrap-vue-next/components/BTooltip')['BTooltip']
     BTr: typeof import('bootstrap-vue-next/components/BTable')['BTr']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
   export interface ComponentCustomProperties {
+    vBPopover: typeof import('bootstrap-vue-next/directives/BPopover')['vBPopover']
     vBToggle: typeof import('bootstrap-vue-next/directives/BToggle')['vBToggle']
     vBTooltip: typeof import('bootstrap-vue-next/directives/BTooltip')['vBTooltip']
   }
